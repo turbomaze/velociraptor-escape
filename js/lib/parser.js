@@ -3,15 +3,23 @@
 | @author Anthony  |
 | @version 1.1     |
 | @date 2016/06/17 |
-| @edit 2016/06/17 |
+| @edit 2016/07/08 |
 \******************/
 
 var Parser = (function() {
+  'use strict';
 
   // config
   var DEBUG = false;
+  var SUPER_DEBUG = false;
+
+  function identity(a) {
+    return a;
+  }
   
-  function applyBuiltIn(rules, structures, type, components, tokens, ret) {
+  function applyBuiltIn(
+    rules, structures, type, components, tokens, ret
+  ) {
     var tempTokens = tokens.slice(0);
     ret.newTokens = tokens.slice(0);
     var doubleRet = {};
@@ -58,7 +66,9 @@ var Parser = (function() {
   
   function ruleApplies(rules, structures, rule, tokens, ret) {
     var struct = typeof rule === 'string' ? rules[rule] : rule;
-  
+
+    if (SUPER_DEBUG) console.log(rule);
+
     // apply the rule
     var applies = false;
     switch (typeof struct) {
@@ -79,12 +89,16 @@ var Parser = (function() {
     // apply the structural transformation
     if (applies && typeof rule === 'string') {
       var transform = structures[rule];
+  
       if (typeof transform === 'object') transform = transform[ret.which];
+  
+      if (typeof transform !== 'function') transform = identity;
+  
       ret.structure = transform.call(this, ret.structure);
     }
   
     if (applies && DEBUG) console.log(rule, ':', tokens, JSON.stringify(ret.structure));
-  
+
     return applies;
   }
   
@@ -95,7 +109,64 @@ var Parser = (function() {
     else return false;
   }
   
-  return {
-    parse: parse
+  function getRuleFromExpansion(expansion) {
+  	if (typeof expansion === 'function') return expansion;
+  
+  	expansion = expansion.replace(/\s+/g, '');
+  
+    if (expansion.indexOf('|') !== -1) {
+  		// or
+      var orArguments = expansion.split('|');
+      var components = orArguments.map(function(ebnfRule) {
+  			return getRuleFromExpansion(ebnfRule);
+  		});
+      return {'or': components};
+    } else if (expansion.indexOf(',') !== -1) {
+  		// and
+      var andArguments = expansion.split(',');
+      var components = andArguments.map(function(ebnfRule) {
+  			return getRuleFromExpansion(ebnfRule);
+  		});
+      return {'and': components};
+    } else if (expansion.indexOf('+') === expansion.length - 1) {
+  		// repeat at least once
+      var ebnfRule = expansion.substring(0, expansion.length - 1);
+      return {'repeat': [1, 100, ebnfRule]};
+    } else if (
+        expansion.indexOf('{') === 0 &&
+        expansion.indexOf('}') === expansion.length - 1
+    ) {
+  		// repeat optionally
+      var ebnfRule = expansion.substring(1, expansion.length - 1);
+      return {'repeat': [0, 100, ebnfRule]};
+    } else if (
+        expansion.indexOf('[') === 0 &&
+        expansion.indexOf(']') === expansion.length - 1
+    ) {
+  		// optional
+      var ebnfRule = expansion.substring(1, expansion.length - 1);
+      return {'repeat': [0, 1, ebnfRule]};
+    }
+  
+    return expansion;
+  }
+  
+  function getRulesFromEbnf(ebnf) {
+    var rules = {};
+    for (var ruleName in ebnf) {
+      rules[ruleName] = getRuleFromExpansion(ebnf[ruleName]);
+    }
+    return rules;
+  }
+  
+  function Parser(grammar, structure) {
+    this.grammar = getRulesFromEbnf(grammar);
+    this.structure = structure;
+  }
+  Parser.prototype.parse = function(goal, tokens) {
+    return parse(this.grammar, this.structure, goal, tokens);
   };
+
+  return Parser;
 })();
+

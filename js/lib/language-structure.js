@@ -2,60 +2,103 @@
 |     Language     |
 |     Structure    |
 | @author Anthony  |
-| @version 0.2     |
+| @version 0.1     |
 | @date 2016/07/07 |
-| @edit 2016/07/07 |
+| @edit 2016/07/08 |
 \******************/
 
-var LanguageStructure = {
-  'expression': function(args) {
+var LanguageStructure = (function() {
+  // helper functions
+  function binaryFunction(args) {
+    return {
+      'type': 'function',
+      'name': args[2],
+      'arguments': [args[0], args[4]]
+    };
+  }
+
+  function chainedBinaryFunctions(args) {
     var struct = args[0];
-    var plusExpressions = args[1];
-    plusExpressions.forEach(function(plusExpression) {
-      var unit = [];
-      unit.push(plusExpression[0]);
-      unit.push(struct);
-      unit.push(plusExpression[1]);
+    var opExpressions = args[1];
+    opExpressions.forEach(function(opExpression) {
+      var unit = {
+        'type': 'function',
+        'name': opExpression[1],
+        'arguments': [struct, opExpression[3]]
+      };
       struct = unit;
     });
     return struct;
-  },
-
-  'term': function(args) {
-    var struct = args[0];
-    var timesExpressions = args[1];
-    timesExpressions.forEach(function(timesExpression) {
-      var unit = [];
-      unit.push(timesExpression[0]);
-      unit.push(struct);
-      unit.push(timesExpression[1]);
-      struct = unit;
-    });
-    return struct;
-  },
-
-  'group': [
-    function(number) {
-      return number;
+  }
+  
+  function first(args) { return args[0]; }
+  function second(args) { return args[1]; }
+  function third(args) { return args[2]; }
+    
+  // structural rules
+  return {
+    // higher level language concepts
+    'block': function(args) {
+      return {
+        'type': 'block', 'statements': args[4]
+      };
+    },
+    'ifElse': function(args) {
+      return {
+        'type': 'if', 'predicate': args[0], 'body': args[2], 'else': args[8]
+      };
+    },
+    'if': function(args) {
+      return {
+        'type': 'if', 'predicate': args[0], 'body': args[2]
+      };
+    },
+    'statements': function(args) {
+      return [args[0]].concat(args[1].map(function(newlineStatement) {
+        return newlineStatement[1];  
+      }));
+    },
+    'statement': [null, null, first],
+    'declaration': function(args) {
+      var identifier = args[2]; 
+      var value = args[6]; 
+      return {
+        'type': 'declaration', 'identifier': identifier, 'value': value
+      };
     },
 
-    function(args) {
-      return args[1];
-    }
-  ],
+    // boolean expressions
+    'booleanExpression': chainedBinaryFunctions,
+    'boolTerm': chainedBinaryFunctions,
+    'boolGroup': [binaryFunction, third],
 
-  'number': function(digits) {
-    var sum = 0;
-    for (var i = 0; i < digits.length; i++) {
-      var place = digits.length - i - 1;
-      sum += digits[i] * Math.pow(10, place);
-    }
-    return sum;
-  },
+    // numeric expressions
+    'numericExpression': chainedBinaryFunctions,
+    'term': chainedBinaryFunctions,
+    'group': [null, third],
 
-  'left': function(left) {return left;},
-  'right': function(right) {return right;},
-  'plus': function(plus) {return plus;},
-  'times': function(times) {return times;},
-  'digit': function(number) {return parseInt(number);}
-};
+    // basic helpers
+    'identifier': function(args) {
+      var chars = [args[0]].concat(args[1]);
+      var word = '';
+      for (var i = 0; i < chars.length; i++) {
+        word += chars[i];
+      }
+      return word;
+    },
+    'number': function(args) {
+      var digits = [args[0]].concat(args[1]);
+      var sum = 0;
+      for (var i = 0; i < digits.length; i++) {
+        var place = digits.length - i - 1;
+        sum += digits[i] * Math.pow(10, place);
+      }
+      return sum;
+    },
+
+    // fundamental building blocks (terminals)
+    'space': function(space) {return ' ';},
+    'digit': function(number) {return parseInt(number);}
+  };
+})();
+

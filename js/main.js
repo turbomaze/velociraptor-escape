@@ -2,7 +2,7 @@
 |   Velociraptor   |
 |      Escape      |
 | @author Anthony  |
-| @version 0.2     |
+| @version 0.1     |
 | @date 2016/07/07 |
 | @edit 2016/07/07 |
 \******************/
@@ -18,18 +18,31 @@ var VelociraptorEscape = (function() {
 
   /*********************
    * working variables */
+  var parser;
 
   /******************
    * work functions */
   function initVelociraptorEscape() {
-    console.log('loaded');
-    console.log(JSON.stringify(parse('expression', '1+2*3')));
+    console.log('Loaded');
+
+    // set up the language parser
+    parser = new Parser(LanguageGrammar, LanguageStructure);
+
+    // test an input program
+    var input = '{ \n\
+      31 + 1 > 2*1 + 3 { \n\
+        let x = 311 \n\
+      } : {\n\
+        let x = 55   \n\
+      } \n  \
+    }';
+    parse('block', input);
   }
 
-  function parse(goal, tokens) {
-    return Parser.parse(
-      LanguageGrammar, LanguageStructure, goal, tokens
-    );
+  function parse(goal, input) {
+    var tokens = input.split('');
+    console.log(input);
+    console.log(JSON.stringify(parser.parse(goal, tokens)));
   }
 
   return {
