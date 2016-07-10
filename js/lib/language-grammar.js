@@ -42,7 +42,12 @@ var LanguageGrammar = (function() {
     'newlineStatement': '\
       spaceNewlineSpace, [ extendedSpace ], statement \
     ',
-    'statement': 'ifElse | if | declaration',
+    'statement': 'function | ifElse | if | return | declaration',
+    'function': '\
+      identifier, [ space ], argumentList, [ extendedSpace ], block \
+    ',
+    'argumentList': '{ fatArrowIndentifier }',
+    'fatArrowIndentifier': 'fatArrow, [ space ], identifier, [ space ]',
     'ifElse': '\
       boolExpression, [ space ], block, [ extendedSpace ], \
       elseWord, [ space ], block \
@@ -52,10 +57,14 @@ var LanguageGrammar = (function() {
       leftBrace, [ extendedSpace ], statements, \
       [ extendedSpace ], rightBrace \
     ',
+    'return': 'returnWord, [ space ], expression',
     'declaration': '\
       declare, [ space ], identifier, [ space ], \
-      eq, [ space ], numExpression \
+      eq, [ space ], expression \
     ',
+
+    // general expressions
+    'expression': 'identifier | boolExpression | numExpression',
 
     // boolean expressions
     'boolExpression': 'boolTerm, { orBoolTerm }',
@@ -64,7 +73,7 @@ var LanguageGrammar = (function() {
     'andBoolGroup': 'space, and, space, boolGroup',
     'boolGroup': '\
       numExpression, [ space ], binBoolOp, [ space ], numExpression | \
-      identifier | \ 
+      identifier | true | false | \
       left, [ space ], boolExpression, [ space ], right \
     ',
     'binBoolOp': 'lt | gt | eqeq | notEq',
@@ -75,13 +84,17 @@ var LanguageGrammar = (function() {
     'term': 'group, { timesGroup }',
     'timesGroup': '[ space ], times, [ space ], group',
     'group': '\
-      number | identifier | left, [ space ], numExpression, [ space ] right \
+      number | identifier | \
+      left, [ space ], numExpression, [ space ], right \
     ',
     
     // keywords
+    'returnWord': getStringFunc('return'),
     'elseWord': getCharFunc(':'),
     'and': getStringFunc('and'),
     'or': getStringFunc('or'),
+    'true': getStringFunc('true'),
+    'false': getStringFunc('false'),
     'declare': getStringFunc('let'),
     // moves: >>>, vvv, <<<, ^^^
     // rotates: @, counter clockwise, @@@, clockwise
@@ -93,19 +106,10 @@ var LanguageGrammar = (function() {
     'extendedSpace': 'spaceNewlineSpace+ | space',
     'spaceNewlineSpace': '[ space ], newline, [ space ]',
     'space': 'blankChar, { blankChar }',
-    'blankChar': function(tokens, ret) {
-      var isBlank = tokens.length >= 1 && tokens[0].match(
-        /^[ \t]/
-      ) !== null;
-      if (isBlank) {
-        ret.newTokens = tokens.slice(1);
-        ret.structure = tokens[0];
-      }
-      return isBlank;
-    },
     'alphanum': 'letter | digit',
 
     // fundamental building blocks (terminals)
+    'fatArrow': getStringFunc('=>'),
     'eqeq': getStringFunc('=='),
     'notEq': getStringFunc('!='),
     'lt': getCharFunc('<'),
@@ -117,7 +121,16 @@ var LanguageGrammar = (function() {
     'leftBrace': getCharFunc('{'),
     'rightBrace': getCharFunc('}'),
     'semicolon': getCharFunc(';'),
-    'spaceChar': getCharFunc(' '),
+    'blankChar': function(tokens, ret) {
+      var isBlank = tokens.length >= 1 && tokens[0].match(
+        /^[ \t]/
+      ) !== null;
+      if (isBlank) {
+        ret.newTokens = tokens.slice(1);
+        ret.structure = tokens[0];
+      }
+      return isBlank;
+    },
     'newline': getCharFunc('\n'), // TODO: pay attn to \r for newlines
     'eq': getCharFunc('='),
     'letter': function(tokens, ret) {

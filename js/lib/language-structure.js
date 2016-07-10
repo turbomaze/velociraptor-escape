@@ -11,7 +11,7 @@ var LanguageStructure = (function() {
   // helper functions
   function binaryFunction(args) {
     return {
-      'type': 'function',
+      'type': 'functionCall',
       'name': args[2],
       'arguments': [args[0], args[4]]
     };
@@ -22,7 +22,7 @@ var LanguageStructure = (function() {
     var opExpressions = args[1];
     opExpressions.forEach(function(opExpression) {
       var unit = {
-        'type': 'function',
+        'type': 'functionCall',
         'name': opExpression[1],
         'arguments': [struct, opExpression[3]]
       };
@@ -44,9 +44,22 @@ var LanguageStructure = (function() {
         return newlineStatement[2];  
       }));
     },
+    'function': function(args) {
+      return {
+        'type': 'function',
+        'name': args[0],
+        'arguments': args[2],
+        'body': args[4]
+      };
+    },
+    'argumentList': function(args) {
+      return args.map(function(arg) {
+        return arg[2];  
+      });
+    },
     'ifElse': function(args) {
       return {
-        'type': 'if', 'predicate': args[0], 'body': args[2], 'else': args[6]
+        'type': 'ifElse', 'predicate': args[0], 'body': args[2], 'else': args[6]
       };
     },
     'if': function(args) {
@@ -59,6 +72,11 @@ var LanguageStructure = (function() {
         'type': 'block', 'statements': args[2]
       };
     },
+    'return': function(args) {
+      return {
+        'type': 'return', 'value': args[2]
+      };
+    },
     'declaration': function(args) {
       var identifier = args[2]; 
       var value = args[6]; 
@@ -67,15 +85,40 @@ var LanguageStructure = (function() {
       };
     },
 
+    // general expressions
+    'expression': [
+      null,
+
+      function(args) {
+        return {
+          'type': 'expression',
+          'class': 'boolean',
+          'expression': args
+        };
+      },
+
+      function(args) {
+        return {
+          'type': 'expression',
+          'class': 'numeric',
+          'expression': args
+        };
+      }
+    ],
+
     // boolean expressions
     'boolExpression': chainedBinaryFunctions,
     'boolTerm': chainedBinaryFunctions,
-    'boolGroup': [binaryFunction, third],
+    'boolGroup': [binaryFunction, null, null, null, third],
 
     // numeric expressions
     'numExpression': chainedBinaryFunctions,
     'term': chainedBinaryFunctions,
     'group': [null, null, third],
+
+    // keywords
+    'true': function(args) { return true; },
+    'false': function(args) { return false; },
 
     // basic helpers
     'identifier': function(args) {

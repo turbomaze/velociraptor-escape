@@ -30,12 +30,16 @@ var VelociraptorEscape = (function() {
 
     // test an input program
     var input = '\
-let a = 1004 \n\
+triple => x { \
+  return 3*x \
+} \n\
+\
 31 + 1 > a*1 + 3 { \n\
   let x = 311 \n\
 } : { \n\
   let x = 55   \n\
 } \n\
+\
 let y = 10 \n\
 ';
     parse('program', input);
