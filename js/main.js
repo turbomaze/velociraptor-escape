@@ -29,14 +29,16 @@ var VelociraptorEscape = (function() {
     parser = new Parser(LanguageGrammar, LanguageStructure);
 
     // test an input program
-    var input = '{ \n\
-      31 + 1 > 2*1 + 3 { \n\
-        let x = 311 \n\
-      } : {\n\
-        let x = 55   \n\
-      } \n  \
-    }';
-    parse('block', input);
+    var input = '\
+let a = 1004 \n\
+31 + 1 > a*1 + 3 { \n\
+  let x = 311 \n\
+} : { \n\
+  let x = 55   \n\
+} \n\
+let y = 10 \n\
+';
+    parse('program', input);
   }
 
   function parse(goal, input) {

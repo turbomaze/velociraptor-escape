@@ -37,42 +37,45 @@ var LanguageGrammar = (function() {
   // grammar rules
   return {
     // higher level language concepts
+    'program': '[ extendedSpace ], statements, [ extendedSpace ]',
     'statements': 'statement, { newlineStatement }',
-    'newlineStatement': 'newline+, statement',
-    'statement': 'ifElse | if | declaration, [ space ]',
-    'ifElse': '\
-      booleanExpression, [ space ], block, [ space ], \
-      { newline }, [ space ], elseWord, [ space ], block \
+    'newlineStatement': '\
+      spaceNewlineSpace, [ extendedSpace ], statement \
     ',
-    'if': 'booleanExpression, [ space ], block',
+    'statement': 'ifElse | if | declaration',
+    'ifElse': '\
+      boolExpression, [ space ], block, [ extendedSpace ], \
+      elseWord, [ space ], block \
+    ',
+    'if': 'boolExpression, [ space ], block',
     'block': '\
-      leftBrace, [ space ], { newline }, [ space ], statements, \
-      [ space ], { newline }, [ space ], rightBrace \
+      leftBrace, [ extendedSpace ], statements, \
+      [ extendedSpace ], rightBrace \
     ',
     'declaration': '\
       declare, [ space ], identifier, [ space ], \
-      eq, space, numericExpression \
+      eq, [ space ], numExpression \
     ',
 
     // boolean expressions
-    'booleanExpression': 'boolTerm, { orBoolTerm }',
+    'boolExpression': 'boolTerm, { orBoolTerm }',
     'orBoolTerm': 'space, or, space, boolTerm',
     'boolTerm': 'boolGroup, { andBoolGroup }',
     'andBoolGroup': 'space, and, space, boolGroup',
     'boolGroup': '\
-      numericExpression, [ space ], binaryBooleanOp, \
-        [ space ], numericExpression | \
-      left, [ space ], booleanExpression, [ space ], right \
+      numExpression, [ space ], binBoolOp, [ space ], numExpression | \
+      identifier | \ 
+      left, [ space ], boolExpression, [ space ], right \
     ',
-    'binaryBooleanOp': 'lt | gt | eqeq | notEq',
+    'binBoolOp': 'lt | gt | eqeq | notEq',
 
     // numeric expressions
-    'numericExpression': 'term, { plusTerm }',
+    'numExpression': 'term, { plusTerm }',
     'plusTerm': '[ space ], plus, [ space ], term',
     'term': 'group, { timesGroup }',
     'timesGroup': '[ space ], times, [ space ], group',
     'group': '\
-      number | left, [ space ], numericExpression, [ space ] right \
+      number | identifier | left, [ space ], numExpression, [ space ] right \
     ',
     
     // keywords
@@ -87,6 +90,8 @@ var LanguageGrammar = (function() {
     // basic helpers
     'identifier': 'letter, { alphanum }',
     'number': 'nonzeroDigit, { digit }',
+    'extendedSpace': 'spaceNewlineSpace+ | space',
+    'spaceNewlineSpace': '[ space ], newline, [ space ]',
     'space': 'blankChar, { blankChar }',
     'blankChar': function(tokens, ret) {
       var isBlank = tokens.length >= 1 && tokens[0].match(

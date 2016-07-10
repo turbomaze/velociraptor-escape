@@ -38,14 +38,15 @@ var LanguageStructure = (function() {
   // structural rules
   return {
     // higher level language concepts
-    'block': function(args) {
-      return {
-        'type': 'block', 'statements': args[4]
-      };
+    'program': second,
+    'statements': function(args) {
+      return [args[0]].concat(args[1].map(function(newlineStatement) {
+        return newlineStatement[2];  
+      }));
     },
     'ifElse': function(args) {
       return {
-        'type': 'if', 'predicate': args[0], 'body': args[2], 'else': args[8]
+        'type': 'if', 'predicate': args[0], 'body': args[2], 'else': args[6]
       };
     },
     'if': function(args) {
@@ -53,12 +54,11 @@ var LanguageStructure = (function() {
         'type': 'if', 'predicate': args[0], 'body': args[2]
       };
     },
-    'statements': function(args) {
-      return [args[0]].concat(args[1].map(function(newlineStatement) {
-        return newlineStatement[1];  
-      }));
+    'block': function(args) {
+      return {
+        'type': 'block', 'statements': args[2]
+      };
     },
-    'statement': [null, null, first],
     'declaration': function(args) {
       var identifier = args[2]; 
       var value = args[6]; 
@@ -68,14 +68,14 @@ var LanguageStructure = (function() {
     },
 
     // boolean expressions
-    'booleanExpression': chainedBinaryFunctions,
+    'boolExpression': chainedBinaryFunctions,
     'boolTerm': chainedBinaryFunctions,
     'boolGroup': [binaryFunction, third],
 
     // numeric expressions
-    'numericExpression': chainedBinaryFunctions,
+    'numExpression': chainedBinaryFunctions,
     'term': chainedBinaryFunctions,
-    'group': [null, third],
+    'group': [null, null, third],
 
     // basic helpers
     'identifier': function(args) {
