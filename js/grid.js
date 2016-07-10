@@ -7,13 +7,15 @@
 
 var Grid = (function() {
   var exports = {};
+  var mappings = {};
 	// config, helper functions, etc here
 	var m = prompt("number of rows (m) = ", 6);
 	var n = prompt("number of cols (n) = ", 6);
-
 	
 	exports.EMPTY = 0;
 	exports.FULL = 1;
+  mappings[exports.FULL] = "fullClass";
+  mappings[exports.EMPTY] = "emptyClass";
 
 	function isValid(x,y){
 		var ok = false;
@@ -33,15 +35,15 @@ var Grid = (function() {
 		var grid = new Array(cols);
 		for (var i=0; i<cols; i++){
 			grid[i] = new Array(rows);
-			//for(var j=0; j<rows; j++){
-				//can do stuff here to set each element
-			//}
+			for(var j=0; j<rows; j++){
+				grid[i][j] = exports.EMPTY;
+			}
 		}
   }
 
 	GridObject.prototype.getState = function(x, y) {
 		if(isValid(x,y)){
-			return grid[x][y];
+			return grid[x][y]; //0, 1, etc.
 		}
 		else{
 			return "not ok state"
@@ -52,6 +54,8 @@ var Grid = (function() {
 		if(isValid(x,y) && getState(x,y) != state){
 			//needs more validation that state is an acceptable state
 			grid[x][y] = state;
+      var cell = document.getElementById("elt-" +x+ "-" +y);
+      cell.classList[1] = mapping[state];
 		}
 		else{
 			return "not ok state"
@@ -59,17 +63,22 @@ var Grid = (function() {
   };
 
 	GridObject.prototype.render = function(){
+    gridHtml = document.getElementById("grid");
+		gridHtml.classList.add("width-" + n);
+    gridHtml.classList.add("height-" + m);
 		var div = "";
 		for(var i=0; i<this.cols; i++){
-			div += "<div class=\"row row-" + i + "\">"
+			div += "<div class=\"row\">";
 			for(var j=0; j<this.rows; j++){
-				div += "<div class=\"elt col col-" + j + " div-" + (i*n + j) + "\"><p>blah" + (i*n + j) + "</p></div>";
+        var classes = "\"elt " +mappings[grid[i][j]]+ "\"";
+        var ids = "\"elt-" + (i*n + j) + " elt-" + i + "-" + j + "\";
+        var p = "<p>blah" + (i*n + j) + "</p>";
+        div += "<div class=" +classes+ " id=" +ids+ ">" +p+ "</div>";
 			}
 		div += "</div>";
 		}
-		grid = document.getElementById("grid");
-		grid.classList += "width-" + n + " height-" + m;
-		grid.innerHTML = div;
+		gridHtml.innerHTML = div;
+
 		elts = document.getElementsByClassName("elt");
 		var width = 100/n + "%";
 		for(var k=0; k< elts.length; k++){
@@ -78,6 +87,24 @@ var Grid = (function() {
 			styles.paddingBottom = width;
 		}
 	}
+
+  GridObject.prototype.clear = function(x, y) {
+    if(x === undefined || y===undefined){
+      clearAll();
+    }
+    else{
+      setState(x,y,exports.EMPTY);
+    }
+  }
+
+  GridObject.prototype.clearAll = function(){
+    for (var i=0; i<cols; i++){
+			grid[i] = new Array(rows);
+			for(var j=0; j<rows; j++){
+			  grid[i][j] = exports.EMPTY;
+			}
+		}
+  }
 
   return GridObject;
 })();
