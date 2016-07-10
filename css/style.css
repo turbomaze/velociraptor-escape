@@ -3,4 +3,40 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: Sans-Serif;
+	/* padding and border are included in the total width and height of the elements <-- NOT WORKING */
+	box-sizing: border-box;
 }
+
+#grid {
+	width: 75%;
+	margin: auto;
+	border: 2px solid green;
+}
+
+
+.row {
+	margin: 0;
+	clear: left;
+	position: relative;
+}
+
+.col {
+	margin: 0;
+	float: left;
+	position: relative;
+	/*border: 2px solid black;*/
+	text-align: center;
+	overflow: hidden;
+	background: lightblue;
+}
+
+.col p {
+	margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%)
+}
+
+
