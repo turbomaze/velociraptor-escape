@@ -42,7 +42,7 @@ var Grid = (function() {
   }
 
 	GridObject.prototype.getState = function(x, y) {
-		if(isValid(x,y)){
+		if(this.isValid(x,y)){
 			return grid[x][y]; //0, 1, etc.
 		}
 		else{
@@ -51,7 +51,7 @@ var Grid = (function() {
 	}
 
   GridObject.prototype.setState = function(x, y, state) {
-		if(isValid(x,y) && getState(x,y) != state){
+		if(this.isValid(x,y) && this.getState(x,y) != state){
 			//needs more validation that state is an acceptable state
 			grid[x][y] = state;
       var cell = document.getElementById("elt-" +x+ "-" +y);
@@ -90,10 +90,10 @@ var Grid = (function() {
 
   GridObject.prototype.clear = function(x, y) {
     if(x === undefined || y===undefined){
-      clearAll();
+      this.clearAll();
     }
     else{
-      setState(x,y,exports.EMPTY);
+      this.setState(x,y,exports.EMPTY);
     }
   }
 
