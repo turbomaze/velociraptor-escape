@@ -21,7 +21,7 @@ var LanguageGrammar = (function() {
   };
   
   // built in functions
-  var BUILT_INS = ['log', 'random'];
+  var BUILT_INS = ['log', 'random', 'move'];
   for (var ai = 0; ai < BUILT_INS.length; ai++) {
     KEYWORDS[BUILT_INS[ai]] = BUILT_INS[ai];
   }

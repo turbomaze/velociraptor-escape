@@ -108,6 +108,12 @@ var Grid = (function() {
     }
   }
 
-  return GridObject;
+  GridObject.prototype.getAgentState = function() {
+    return [0, 0];
+  };
+
+  exports.Grid = GridObject;
+
+  return exports;
 })();
 

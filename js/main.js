@@ -18,15 +18,13 @@ var VelociraptorEscape = (function() {
 
   /*********************
    * working variables */
-  var grid;
   var interpreter;
 
   /******************
    * work functions */
   function initVelociraptorEscape() {
     // set up the grid
-    grid = new Grid(6, 6);
-    grid.render();
+    GameEngine.init();
 
     // built in functions
     var builtIns = {
@@ -37,6 +35,11 @@ var VelociraptorEscape = (function() {
 
       'random': function(n) {
         return Math.floor(n * Math.random());
+      },
+
+      'move': function(direction) {
+        GameEngine.move(direction);
+        return undefined; 
       }
     };
 
@@ -57,6 +60,12 @@ fib => n { \n\
 \n\
 log -> fib -> 10 \n\
 log -> random -> fib -> random -> 10 \n\
+move -> 0 \n\
+move -> 2 \n\
+move -> 1 \n\
+move -> 9 \n\
+move -> 3 \n\
+move -> 1 \n\
 ';
 
     interpreter.interpret(program);
