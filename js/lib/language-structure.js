@@ -2,27 +2,29 @@
 |     Language     |
 |     Structure    |
 | @author Anthony  |
-| @version 0.1     |
+| @version 0.2     |
 | @date 2016/07/07 |
-| @edit 2016/07/08 |
+| @edit 2016/07/12 |
 \******************/
 
 var LanguageStructure = (function() {
+  'use strict'; 
+
   // helper functions
-  function binaryFunction(args) {
+  function binaryOperator(args) {
     return {
-      'type': 'functionCall',
+      'type': 'operator',
       'name': args[2],
       'arguments': [args[0], args[4]]
     };
   }
-
-  function chainedBinaryFunctions(args) {
+  
+  function chainedBinaryOperators(args) {
     var struct = args[0];
     var opExpressions = args[1];
     opExpressions.forEach(function(opExpression) {
       var unit = {
-        'type': 'functionCall',
+        'type': 'operator',
         'name': opExpression[1],
         'arguments': [struct, opExpression[3]]
       };
@@ -34,114 +36,132 @@ var LanguageStructure = (function() {
   function first(args) { return args[0]; }
   function second(args) { return args[1]; }
   function third(args) { return args[2]; }
-    
+  function secondMap(args) {
+    return args.map(function(arg) {
+      return arg[2];  
+    });
+  } 
+  
   // structural rules
   return {
-    // higher level language concepts
-    'program': second,
-    'statements': function(args) {
-      return [args[0]].concat(args[1].map(function(newlineStatement) {
-        return newlineStatement[2];  
-      }));
-    },
-    'function': function(args) {
-      return {
-        'type': 'function',
-        'name': args[0],
-        'arguments': args[2],
-        'body': args[4]
-      };
-    },
-    'argumentList': function(args) {
-      return args.map(function(arg) {
-        return arg[2];  
-      });
-    },
-    'ifElse': function(args) {
-      return {
-        'type': 'ifElse', 'predicate': args[0], 'body': args[2], 'else': args[6]
-      };
-    },
-    'if': function(args) {
-      return {
-        'type': 'if', 'predicate': args[0], 'body': args[2]
-      };
-    },
-    'block': function(args) {
-      return {
-        'type': 'block', 'statements': args[2]
-      };
-    },
-    'return': function(args) {
-      return {
-        'type': 'return', 'value': args[2]
-      };
-    },
-    'declaration': function(args) {
-      var identifier = args[2]; 
-      var value = args[6]; 
-      return {
-        'type': 'declaration', 'identifier': identifier, 'value': value
-      };
-    },
-
-    // general expressions
-    'expression': [
-      null,
-
-      function(args) {
+    structure: {
+      // higher level language concepts
+      'program': second,
+      'statements': function(args) {
+        return [args[0]].concat(args[1].map(function(newlineStatement) {
+          return newlineStatement[2];  
+        }));
+      },
+      'function': function(args) {
         return {
-          'type': 'expression',
-          'class': 'boolean',
-          'expression': args
+          'type': 'function',
+          'name': args[0],
+          'parameters': args[2],
+          'body': args[4]
         };
       },
-
-      function(args) {
+      'call': [
+        function(args) {
+          if (args[2].length === 0) {
+            return args[0]; // treat it as an identifier
+          } else {
+            return {
+              'type': 'call',
+              'name': args[0],
+              'arguments': args[2],
+            };
+          }
+        },
+  
+        function(args) {
+          return {
+            'type': 'builtIn',
+            'name': args[0],
+            'arguments': args[2],
+          };
+        }
+      ],
+      'parameterList': secondMap,
+      'argumentList': secondMap,
+      'ifElse': function(args) {
         return {
-          'type': 'expression',
-          'class': 'numeric',
-          'expression': args
+          'type': 'ifElse', 'predicate': args[0], 'body': args[2], 'else': args[6]
         };
-      }
-    ],
-
-    // boolean expressions
-    'boolExpression': chainedBinaryFunctions,
-    'boolTerm': chainedBinaryFunctions,
-    'boolGroup': [binaryFunction, null, null, null, third],
-
-    // numeric expressions
-    'numExpression': chainedBinaryFunctions,
-    'term': chainedBinaryFunctions,
-    'group': [null, null, third],
-
-    // keywords
-    'true': function(args) { return true; },
-    'false': function(args) { return false; },
-
-    // basic helpers
-    'identifier': function(args) {
-      var chars = [args[0]].concat(args[1]);
-      var word = '';
-      for (var i = 0; i < chars.length; i++) {
-        word += chars[i];
-      }
-      return word;
-    },
-    'number': function(args) {
-      var digits = [args[0]].concat(args[1]);
-      var sum = 0;
-      for (var i = 0; i < digits.length; i++) {
-        var place = digits.length - i - 1;
-        sum += digits[i] * Math.pow(10, place);
-      }
-      return sum;
-    },
-
-    // fundamental building blocks (terminals)
-    'space': function(space) {return ' ';},
-    'digit': function(number) {return parseInt(number);}
+      },
+      'if': function(args) {
+        return {
+          'type': 'if', 'predicate': args[0], 'body': args[2]
+        };
+      },
+      'block': function(args) {
+        return args[2];
+      },
+      'return': function(args) {
+        return {
+          'type': 'return', 'value': args[2]
+        };
+      },
+      'assignment': function(args) {
+        var identifier = args[0]; 
+        var value = args[4]; 
+        return {
+          'type': 'assignment', 'name': identifier, 'value': value
+        };
+      },
+    
+      // general expressions
+      'expression': chainedBinaryOperators,
+      'boolTerm': chainedBinaryOperators,
+      'notBoolGroup': function(args) {
+        if (args[0].length > 0) {
+          return {
+            'type': 'operator',
+            'name': args[0][0],
+            'arguments': [args[1]]
+          };
+        } else return args[1];
+      },
+      'boolRelation': function(args) {
+        if (args[1].length === 0) {
+          return args[0];
+        } else {
+          return {
+            'type': 'operator',
+            'name': args[1][0][1],
+            'arguments': [args[0], args[1][0][3]],
+          };
+        }
+      },
+      'numExpression': chainedBinaryOperators,
+      'term': chainedBinaryOperators,
+      'group': [null, null, null, third],
+    
+      // keywords
+      'true': function(args) { return true; },
+      'false': function(args) { return false; },
+    
+      // basic helpers
+      'number': [
+        function(args) {
+          var digits = [args[1]].concat(args[2]);
+          var sum = 0;
+          for (var i = 0; i < digits.length; i++) {
+            var place = digits.length - i - 1;
+            sum += digits[i] * Math.pow(10, place);
+          }
+  
+          if (args[0].length > 0) return -sum;
+          else return sum;
+        }
+      ],
+    
+      // fundamental building blocks (terminals)
+      'not': function(not) {return 'not';},
+      'space': function(space) {return ' ';},
+      'zero': function(number) {return parseInt(number);},
+      'nonzeroDigit': function(number) {return parseInt(number);},
+      'digit': function(number) {return parseInt(number);}
+    }
   };
 })();
 
