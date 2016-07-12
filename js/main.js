@@ -18,12 +18,15 @@ var VelociraptorEscape = (function() {
 
   /*********************
    * working variables */
+  var grid;
   var interpreter;
 
   /******************
    * work functions */
   function initVelociraptorEscape() {
-    console.log('Loaded');
+    // set up the grid
+    grid = new Grid(6, 6);
+    grid.render();
 
     // built in functions
     var builtIns = {
