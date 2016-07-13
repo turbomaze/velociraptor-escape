@@ -42,7 +42,7 @@ var Grid = (function() {
 		this.rows = n;
 
     // set agent location
-    this.agentloc = [0,0];
+    this.agentloc = [0, 0];
     if (
       start.length == 2 &&
       !isNaN(parseInt(start[0])) && !isNaN(parseInt(start[1])) &&
@@ -60,7 +60,7 @@ var Grid = (function() {
 				this.grid[i][j] = exports.EMPTY;
 			}
 		}
-    this.grid[this.agentloc[1]][this.agentloc[0]] = 2;
+    this.grid[this.agentloc[1]][this.agentloc[0]] = exports.AGENT;
   }
 
 	GridObject.prototype.getState = function(x, y) {

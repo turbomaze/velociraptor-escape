@@ -3,30 +3,127 @@
 | @author Anthony  |
 | @version 1.1     |
 | @date 2016/07/10 |
-| @edit 2016/07/12 |
+| @edit 2016/07/13 |
 \******************/
-
+  
 var Interpreter = (function() {
   'use strict';
 
+  // exports
+  var exports = {};
+  exports.ERR_CODE_SIZE = 100;
+  exports.ERR_RUNTIME = 101;
+  exports.ERR_COMPUTE = 102;
+  
   // config
   var GOAL = 'program';
   
+  // helpers
+  function getSizeOfAST(ast) {
+    var count = 1;
+  
+    var type = Object.prototype.toString.call(ast);
+    switch (type) {
+      // tokens with an additional type specification
+      case '[object Object]':
+        switch (ast.type) {
+          case 'function':
+            count += getSizeOfAST(ast.parameters);
+            count += getSizeOfAST(ast.body);
+            break;
+          case 'call':
+          case 'builtIn':
+            count += getSizeOfAST(ast.arguments);
+            break;
+          case 'ifElse':
+            count += getSizeOfAST(ast.predicate);
+            count += getSizeOfAST(ast.body);
+            count += getSizeOfAST(ast.else);
+            break;
+          case 'if':
+            count += getSizeOfAST(ast.predicate);
+            count += getSizeOfAST(ast.body);
+            break;
+          case 'return':
+          case 'assignment':
+            count += getSizeOfAST(ast.value);
+            break;
+          case 'operator': // incidental similarity with call's
+            count += getSizeOfAST(ast.arguments);
+            break;
+        }
+        break;
+  
+      // sequence of ASTs
+      case '[object Array]':
+        ast.forEach(function(node) {
+          count += getSizeOfAST(node);
+        }); 
+        break;
+  
+      // terminals
+      case '[object String]':
+      case '[object Number]':
+      case '[object Boolean]':
+        break;
+    }
+  
+    return count;
+  }
+  
+  function exitIfExcessiveCompute(stats, limits) {
+    if (stats['statement'] > limits.compute) {
+      throw {message: 'too much compute', code: exports.ERR_COMPUTE};
+    }
+  }
+  
+  function logStats(type, stats, limits) {
+    stats[type] = (stats[type] || 0) + 1;
+    exitIfExcessiveCompute(stats, limits);
+  }
+  
+  // interpreter object
   function Interpreter(grammar, structure, builtIns) {
     this.parser = new Parser(grammar, structure);
     this.builtIns = builtIns;
+    this.limits = {code: Infinity, compute: Infinity};
   }
   
-  Interpreter.prototype.interpret = function(input) {
+  Interpreter.prototype.interpret = function(input, limits) {
+    this.limits = limits || this.limits;
+  
     // get the AST
     var ast = this.parser.parse(GOAL, input.split(''));
   
+    // get the size of the AST
+    var codeSize = getSizeOfAST(ast);
+    if (codeSize > this.limits.code) {
+       throw {message: 'too much code', code: exports.ERR_CODE_SIZE};
+    }
+  
     // run it
-    return this.runBlock({}, ast);
+    var stats = {astSize: codeSize};
+    var start = +new Date();
+    try {
+      this.runBlock({}, ast, stats);
+      var end = +new Date();
+      stats['time'] = end - start; // in ms
+      return stats;
+    } catch (e) {
+      var end = +new Date();
+      stats['time'] = end - start; // in ms
+      if (typeof e !== 'string') {
+        e['stats'] = stats;
+        throw e;
+      } else {
+        throw {message: e, code: exports.ERR_RUNTIME, stats: stats};
+      }
+    }
   };
   
-  Interpreter.prototype.runFunction = function(variables, call) {
+  Interpreter.prototype.runFunction = function(variables, call, stats) {
     var self = this;
+    logStats('function', stats, this.limits);
   
     // get the definition
     var definition = {};
@@ -43,7 +140,7 @@ var Interpreter = (function() {
   
     // get the arguments
     var args = call.arguments.map(function(argument) {
-      return self.evaluateExpression(variables, argument);
+      return self.evaluateExpression(variables, argument, stats);
     });
   
     // handle scope stuff; functions can see 1) other functions and 2) arguments
@@ -62,15 +159,16 @@ var Interpreter = (function() {
     }
   
     // actually run the function
-    return this.runBlock(callVariables, definition.body);
+    return this.runBlock(callVariables, definition.body, stats);
   };
   
-  Interpreter.prototype.runBuiltIn = function(variables, call) {
+  Interpreter.prototype.runBuiltIn = function(variables, call, stats) {
     var self = this;
+    logStats('builtIn', stats, this.limits);
   
     // get the arguments
     var args = call.arguments.map(function(argument) {
-      return self.evaluateExpression(variables, argument);
+      return self.evaluateExpression(variables, argument, stats);
     });
   
     // get the definition
@@ -82,11 +180,13 @@ var Interpreter = (function() {
     }
   };
   
-  Interpreter.prototype.runBlock = function(variables, body) {
+  Interpreter.prototype.runBlock = function(variables, body, stats) {
+    logStats('block', stats, this.limits);
+  
     // run all of the statements in the body
     for (var si = 0; si < body.length; si++) {
       var statement = body[si];
-      var value = this.executeStatement(variables, statement);
+      var value = this.executeStatement(variables, statement, stats);
       if (value !== undefined) {
         return value;
       }
@@ -95,7 +195,11 @@ var Interpreter = (function() {
     return undefined;
   };
   
-  Interpreter.prototype.executeStatement = function(variables, statement) {
+  Interpreter.prototype.executeStatement = function(
+    variables, statement, stats
+  ) {
+    logStats('statement', stats, this.limits);
+  
     if (typeof statement === 'string') {
       // it's a naked identifier; treat it as a function call
       if (statement in variables && typeof variables[statement] === 'object') {
@@ -116,34 +220,38 @@ var Interpreter = (function() {
           return undefined;
   
         case 'call':
-          this.runFunction(variables, statement);
+          this.runFunction(variables, statement, stats);
           return undefined;
   
         case 'builtIn':
-          this.runBuiltIn(variables, statement);
+          this.runBuiltIn(variables, statement, stats);
           return undefined;
   
         case 'return':
-          return this.evaluateExpression(variables, statement.value);
+          return this.evaluateExpression(variables, statement.value, stats);
   
         case 'ifElse':
-          var predicate = this.evaluateExpression(variables, statement.predicate);
+          var predicate = this.evaluateExpression(
+            variables, statement.predicate, stats
+          );
           if (predicate) {
-            return this.runBlock(variables, statement.body);
+            return this.runBlock(variables, statement.body, stats);
           } else {
-            return this.runBlock(variables, statement.else);
+            return this.runBlock(variables, statement.else, stats);
           }
   
         case 'if':
-          var predicate = this.evaluateExpression(variables, statement.predicate);
+          var predicate = this.evaluateExpression(
+            variables, statement.predicate, stats
+          );
           if (predicate) {
-            return this.runBlock(variables, statement.body);
+            return this.runBlock(variables, statement.body, stats);
           }
           return undefined;
   
         case 'assignment':
           variables[statement.name] = this.evaluateExpression(
-            variables, statement.value
+            variables, statement.value, stats
           ); 
           return undefined;
       }
@@ -152,17 +260,23 @@ var Interpreter = (function() {
     return undefined;
   };
   
-  Interpreter.prototype.evaluateExpression = function(variables, expression) {
+  Interpreter.prototype.evaluateExpression = function(
+    variables, expression, stats
+  ) {
+    logStats('expression', stats, this.limits);
+  
     if (typeof expression === 'string') {
       if (expression in variables) {
         // it's a naked identifier; might be a function call
         if (typeof variables[expression] === 'object') {
           return this.evaluateExpression(
-            variables, {
+            variables,
+            {
               'type': 'call',
               'name': expression,
               'arguments': []
-            }
+            },
+            stats
           );
         } else {
           return variables[expression];
@@ -180,14 +294,14 @@ var Interpreter = (function() {
     } else {
       switch (expression.type) {
         case 'call':
-          return this.runFunction(variables, expression);
+          return this.runFunction(variables, expression, stats);
   
         case 'builtIn':
-          return this.runBuiltIn(variables, expression);
+          return this.runBuiltIn(variables, expression, stats);
   
         case 'operator':
           return this.evaluateOperator(
-            variables, expression.name, expression.arguments
+            variables, expression.name, expression.arguments, stats
           );
       }
     }
@@ -195,8 +309,11 @@ var Interpreter = (function() {
     throw 'ERR: unknown expression "' + JSON.stringify(expression) + '"';
   };
   
-  Interpreter.prototype.evaluateOperator = function(variables, name, args) {
+  Interpreter.prototype.evaluateOperator = function(
+    variables, name, args, stats
+  ) {
     var self = this;
+    logStats('operator', stats, this.limits);
   
     function getBadResultMessage(name) {
       return 'ERR: operation "' + name + '" returned an improper result.';
@@ -209,7 +326,7 @@ var Interpreter = (function() {
   
     function handleUnaryOperator(name, inputs, type1, f) {
       inputs = inputs.map(function(arg) {
-        return self.evaluateExpression(variables, arg);
+        return self.evaluateExpression(variables, arg, stats);
       });
   
       if (typeof inputs[0] !== type1) {
@@ -224,7 +341,7 @@ var Interpreter = (function() {
   
     function handleBinaryOperator(name, inputs, type1, type2, f) {
       inputs = inputs.map(function(arg) {
-        return self.evaluateExpression(variables, arg);
+        return self.evaluateExpression(variables, arg, stats);
       });
   
       if (typeof inputs[0] !== type1) {
@@ -316,10 +433,12 @@ var Interpreter = (function() {
         });
   
       default:
-        throw 'Unknown operator "' + name + '"';
+        throw 'ERR: Unknown operator "' + name + '".';
     }
   };
+  
+  exports.Interpreter = Interpreter;
+  exports.getSizeOfAST = getSizeOfAST;
 
-  return Interpreter;
+  return exports;
 })();
-

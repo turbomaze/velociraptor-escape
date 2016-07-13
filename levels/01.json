@@ -1,8 +1,8 @@
 {
   "dimensions": [10, 10],
   "limits": {
-    "code": 10,
-    "compute": 20
+    "code": 100,
+    "compute": 1000
   },
   "start": [1, 4],
   "finish": [4, 9],

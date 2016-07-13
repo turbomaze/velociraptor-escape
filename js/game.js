@@ -12,28 +12,88 @@ var GameEngine = (function() {
 
   // config
   var UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
-  var MOVE_EVERY = 1000; // ms
+  var MOVE_EVERY = 200; // ms
 
   // working variables
-  var grid;
   var movementQueue;
   var level;
-  var nextFrame = 1;
+	var grid;
+  var nextFrame;
+  var interpreter;
 
   function initGameEngine(level_) {
+		// init misc variables
+    movementQueue = [];
+		nextFrame = 1;
+
+		// setup the level
     level = level_;
     grid = new Grid.Grid(level.dimensions[0], level.dimensions[1], level.start);
 
+    // setup the grid and render it
     grid.render();
     grid.fromFrame(level.frames[0]);
 
-    movementQueue = [];
+    // setup the interpreter
+    var builtIns = {
+      'log': function() {
+        console.log.apply(console, arguments);
+        return undefined;
+      },
 
+      'random': function(n) {
+        return Math.floor(n * Math.random());
+      },
+
+      'move': function(direction) {
+        queueMovement(direction);
+        return undefined; 
+      }
+    };
+    interpreter = new Interpreter.Interpreter(
+      LanguageGrammar(Object.keys(builtIns)).grammar,
+      LanguageStructure.structure,
+      builtIns
+    );
+
+    var program = '\
+fib => n { \n\
+  n == 0 { return 0 } \n\
+  n == 1 { return 1 } \n\
+  return (fib -> n - 1) + (fib -> n - 2) \n\
+} \n\
+\n\
+log -> fib -> random -> 20 \n\
+move -> 0 \n\
+move -> 1 \n\
+move -> 2 \n\
+move -> 3 \n\
+move -> 0 \n\
+move -> 1 \n\
+move -> 2 \n\
+move -> 3 \n\
+move -> 0 \n\
+move -> 1 \n\
+move -> 2 \n\
+move -> 3 \n\
+';
+    runProgram(program);
+
+    // execute movements on an interval
     setInterval(function() {
       if (movementQueue.length > 0) {
         executeMovement(movementQueue.shift());
       }
     }, MOVE_EVERY);
+  }
+
+  function runProgram(program) {
+    try {
+      var stats = interpreter.interpret(program, level.limits);
+      console.log(stats);
+    } catch (e) {
+      console.log(JSON.stringify(e));
+    }
   }
 
   function executeMovement(movement) {
@@ -83,6 +143,7 @@ var GameEngine = (function() {
   return {
     init: initGameEngine,
     move: queueMovement,
+    runProgram: runProgram,
     UP: UP,
     RIGHT: RIGHT,
     DOWN: DOWN,

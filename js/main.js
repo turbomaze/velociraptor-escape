@@ -18,7 +18,6 @@ var VelociraptorEscape = (function() {
 
   /*********************
    * working variables */
-  var interpreter;
 
   /******************
    * work functions */
@@ -29,14 +28,14 @@ var VelociraptorEscape = (function() {
 
     //button things
     var runBtn = document.getElementById('run-btn');
-    runBtn.addEventListener('click',function(){
+    runBtn.addEventListener('click',function() {
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
       console.log('RUN ' + text);
     });
 
     var submitBtn = document.getElementById('submit-btn');
-    submitBtn.addEventListener('click',function(){
+    submitBtn.addEventListener('click', function() {
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
       //process text
@@ -62,28 +61,6 @@ var VelociraptorEscape = (function() {
       submitBtn.disabled = false;
       watchBtn.disabled = false;
     }
-
-    // built in functions
-    var builtIns = {
-      'log': function() {
-        console.log.apply(console, arguments);
-        return undefined;
-      },
-
-      'random': function(n) {
-        return Math.floor(n * Math.random());
-      },
-
-      'move': function(direction) {
-        GameEngine.move(direction);
-        return undefined;
-      }
-    };
-
-    // set up the language parser
-    interpreter = new Interpreter(
-      LanguageGrammar.grammar, LanguageStructure.structure, builtIns
-    );
   }
 
   return {
