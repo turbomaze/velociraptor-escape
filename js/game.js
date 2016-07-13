@@ -47,7 +47,7 @@ var GameEngine = (function() {
 
       'move': function(direction) {
         queueMovement(direction);
-        return undefined; 
+        return undefined;
       }
     };
     interpreter = new Interpreter.Interpreter(
@@ -55,36 +55,6 @@ var GameEngine = (function() {
       LanguageStructure.structure,
       builtIns
     );
-
-    var program = '\
-fib => n { \n\
-  n == 0 { return 0 } \n\
-  n == 1 { return 1 } \n\
-  return (fib -> n - 1) + (fib -> n - 2) \n\
-} \n\
-\n\
-log -> fib -> random -> 20 \n\
-move -> 0 \n\
-move -> 1 \n\
-move -> 2 \n\
-move -> 3 \n\
-move -> 0 \n\
-move -> 1 \n\
-move -> 2 \n\
-move -> 3 \n\
-move -> 0 \n\
-move -> 1 \n\
-move -> 2 \n\
-move -> 3 \n\
-';
-    runProgram(program);
-
-    // execute movements on an interval
-    setInterval(function() {
-      if (movementQueue.length > 0) {
-        executeMovement(movementQueue.shift());
-      }
-    }, MOVE_EVERY);
   }
 
   function runProgram(program) {
@@ -140,6 +110,32 @@ move -> 3 \n\
     }
   }
 
+  function run(program, done) {
+    grid.clearAll();
+    grid.render();
+    grid.fromFrame(level.frames[0]);
+    grid.setState(level.start[0], level.start[1], Grid.AGENT);
+    
+    runProgram(program);
+
+    var runInterval = setInterval(runCallback, MOVE_EVERY);
+    function runCallback() {
+      if(nextFrame < level.frames.length || movementQueue.length > 0) {
+        if(nextFrame < level.frames.length) {
+          grid.fromFrame(level.frames[nextFrame]);
+          nextFrame += 1;
+        }
+        if (movementQueue.length > 0) {
+          executeMovement(movementQueue.shift());
+        }
+      } else {
+        clearInterval(runInterval);
+        done();
+        nextFrame = 0;
+      }
+    }
+  }
+
   return {
     init: initGameEngine,
     move: queueMovement,
@@ -148,6 +144,7 @@ move -> 3 \n\
     RIGHT: RIGHT,
     DOWN: DOWN,
     LEFT: LEFT,
-    watch: watch
+    watch: watch,
+    run: run
   };
 })();

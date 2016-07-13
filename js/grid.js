@@ -60,7 +60,7 @@ var Grid = (function() {
 				this.grid[i][j] = exports.EMPTY;
 			}
 		}
-    this.grid[this.agentloc[1]][this.agentloc[0]] = exports.AGENT;
+    this.grid[this.agentloc[0]][this.agentloc[1]] = exports.AGENT;
   }
 
 	GridObject.prototype.getState = function(x, y) {
@@ -136,8 +136,8 @@ var Grid = (function() {
   };
 
   GridObject.prototype.fromFrame = function(frame) {
-    for(var i = 0; i < this.rows; i++) {
-      for(var j = 0; j < this.cols; j++) {
+    for(var i = 0; i < this.cols; i++) {
+      for(var j = 0; j < this.rows; j++) {
         if(this.getState(i,j) != exports.AGENT) this.setState(i,j, frame[i][j]);
       }
     }
