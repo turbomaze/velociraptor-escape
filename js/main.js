@@ -23,8 +23,9 @@ var VelociraptorEscape = (function() {
   /******************
    * work functions */
   function initVelociraptorEscape() {
-    // set up the grid
-    GameEngine.init();
+    Level.loadLevel('01', function(level) {
+      GameEngine.init(level);
+    });
 
     //button things
     var runBtn = document.getElementById('run-btn');
@@ -44,12 +45,24 @@ var VelociraptorEscape = (function() {
 
     var watchBtn = document.getElementById('watch-btn');
     watchBtn.addEventListener('click',function(){
-      var textarea = document.getElementById('textbox');
-      var text = textarea.value;
-      //process text
-      console.log('WATCH ' + text);
+      disableButtons();
+      GameEngine.watch(function() {
+        enableButtons();
+      });
     });
-    
+
+    function disableButtons() {
+      runBtn.disabled = true;
+      submitBtn.disabled = true;
+      watchBtn.disabled = true;
+    }
+
+    function enableButtons() {
+      runBtn.disabled = false;
+      submitBtn.disabled = false;
+      watchBtn.disabled = false;
+    }
+
     // built in functions
     var builtIns = {
       'log': function() {
@@ -63,7 +76,7 @@ var VelociraptorEscape = (function() {
 
       'move': function(direction) {
         GameEngine.move(direction);
-        return undefined; 
+        return undefined;
       }
     };
 
@@ -71,34 +84,6 @@ var VelociraptorEscape = (function() {
     interpreter = new Interpreter(
       LanguageGrammar.grammar, LanguageStructure.structure, builtIns
     );
-
-    // run a program
-    var program = '\
-fib => n { \n\
-  dec => x { return x - 1 } \n\
-\n\
-  n == 0 { return 0 } \n\
-  n == 1 { return 1 } \n\
-  return (fib -> dec -> n) + (fib -> dec -> dec -> n) \n\
-} \n\
-\n\
-log -> fib -> 10 \n\
-log -> random -> fib -> random -> 10 \n\
-move -> 0 \n\
-move -> 1 \n\
-move -> 2 \n\
-move -> 3 \n\
-move -> 0 \n\
-move -> 1 \n\
-move -> 2 \n\
-move -> 3 \n\
-move -> 0 \n\
-move -> 1 \n\
-move -> 2 \n\
-move -> 3 \n\
-';
-
-    interpreter.interpret(program);
   }
 
   return {

@@ -10,9 +10,9 @@ var Grid = (function() {
 
   var exports = {};
   var mappings = {};
-	
+
   // config, helper functions, etc here
-	
+
   // states enum
 	exports.EMPTY = 0;
 	exports.FULL = 1;
@@ -22,7 +22,7 @@ var Grid = (function() {
   mappings[exports.FULL] = "fullClass";
   mappings[exports.EMPTY] = "emptyClass";
   mappings[exports.AGENT] = "agentClass";
-  
+
 	function isValid(x, y, m, n){
 		var ok = false;
 		x = parseInt(x);
@@ -35,7 +35,7 @@ var Grid = (function() {
 		}
 		return ok;
 	}
-  
+
   // meat and potatoes
   function GridObject(n, m, start) {
 		this.cols = m;
@@ -52,7 +52,7 @@ var Grid = (function() {
     } else {
       throw '3rd argument is agent\'s location in 2D [x, y]';
     }
-    
+
 		this.grid = new Array(this.cols);
 		for (var i = 0; i < this.cols; i++){
 			this.grid[i] = new Array(this.rows);
@@ -78,7 +78,7 @@ var Grid = (function() {
       var cell = document.getElementById("elt-" + x + "-" + y);
       cell.classList.remove(mappings[this.getState(x, y)]);
 			this.grid[x][y] = state;
-      cell.classList.add(mappings[state]);      
+      cell.classList.add(mappings[state]);
       if (state == exports.AGENT) {
         this.agentloc = [x, y];
       }
@@ -135,8 +135,15 @@ var Grid = (function() {
     return this.agentloc;
   };
 
+  GridObject.prototype.fromFrame = function(frame) {
+    for(var i = 0; i < this.rows; i++) {
+      for(var j = 0; j < this.cols; j++) {
+        if(this.getState(i,j) != exports.AGENT) this.setState(i,j, frame[i][j]);
+      }
+    }
+  };
+
   exports.Grid = GridObject;
 
   return exports;
 })();
-

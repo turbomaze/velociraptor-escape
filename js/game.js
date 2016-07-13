@@ -12,18 +12,20 @@ var GameEngine = (function() {
 
   // config
   var UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
-  var DIMS = [6, 6];
-  var STARTING_LOCATION = [4, 4];
   var MOVE_EVERY = 1000; // ms
 
   // working variables
   var grid;
   var movementQueue;
+  var level;
+  var nextFrame = 1;
 
-  function initGameEngine() {
-    grid = new Grid.Grid(DIMS[0], DIMS[1], STARTING_LOCATION); 
+  function initGameEngine(level_) {
+    level = level_;
+    grid = new Grid.Grid(level.dimensions[0], level.dimensions[1], level.start);
 
     grid.render();
+    grid.fromFrame(level.frames[0]);
 
     movementQueue = [];
 
@@ -63,14 +65,28 @@ var GameEngine = (function() {
         throw 'ERR: invalid movement direction supplied.';
     }
   }
-  
+
+  function watch(done) {
+    var watchInterval = setInterval(watchCallback, MOVE_EVERY);
+    function watchCallback() {
+      if(nextFrame < level.frames.length) {
+        grid.fromFrame(level.frames[nextFrame]);
+        nextFrame += 1;
+      } else {
+        clearInterval(watchInterval);
+        done();
+        nextFrame = 0;
+      }
+    }
+  }
+
   return {
     init: initGameEngine,
     move: queueMovement,
     UP: UP,
     RIGHT: RIGHT,
     DOWN: DOWN,
-    LEFT: LEFT
+    LEFT: LEFT,
+    watch: watch
   };
 })();
-
