@@ -7,10 +7,18 @@ html, body {
 	box-sizing: border-box;
 }
 
+.content {
+  width: 100%;
+  margin:0 auto;
+}
+
 #grid {
-	width: 75%;
-	margin: auto;
-	border: 2px solid green;
+  margin: 30px;
+	float: left;
+	width: 40%;
+  border: 2px solid green;
+  /*clumsy fix to bottom border not containing last row of boxes*/
+  padding-bottom: 120px;
 }
 
 .fullClass {
@@ -21,29 +29,44 @@ html, body {
   background: red;
 }
 
+.agentClass {
+  background: lightblue;
+}
+
 .row {
 	margin: 0;
 	clear: left;
 	position: relative;
 }
 
-.col {
+.elt {
 	margin: 0;
 	float: left;
 	position: relative;
 	/*border: 2px solid black;*/
 	text-align: center;
 	overflow: hidden;
-	background: lightblue;
 }
 
-.col p {
+.elt p {
 	margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
   margin-right: -50%;
   transform: translate(-50%, -50%)
+}
+
+#controls {
+  margin: 30px;
+  float: right;
+  width: 40%;
+}
+
+textarea {
+  /* there's probably a better way to set the height/width of this box, and perhaps to make it auto-expand */
+  width: 100%;
+  height: 100%;
 }
 
 

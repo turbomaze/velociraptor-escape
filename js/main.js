@@ -4,7 +4,7 @@
 | @author Anthony  |
 | @version 0.1     |
 | @date 2016/07/07 |
-| @edit 2016/07/07 |
+| @edit 2016/07/13 |
 \******************/
 
 var VelociraptorEscape = (function() {
@@ -26,6 +26,31 @@ var VelociraptorEscape = (function() {
     // set up the grid
     GameEngine.init();
 
+    //button things
+    var runBtn = document.getElementById('run-btn');
+    runBtn.addEventListener('click',function(){
+      var textarea = document.getElementById('textbox');
+      var text = textarea.value;
+      console.log('RUN ' + text);
+      grid.moveAgent(text);
+    });
+
+    var submitBtn = document.getElementById('submit-btn');
+    submitBtn.addEventListener('click',function(){
+      var textarea = document.getElementById('textbox');
+      var text = textarea.value;
+      //process text
+      console.log('SUBMIT ' + text);
+    });
+
+    var watchBtn = document.getElementById('watch-btn');
+    watchBtn.addEventListener('click',function(){
+      var textarea = document.getElementById('textbox');
+      var text = textarea.value;
+      //process text
+      console.log('WATCH ' + text);
+    });
+    
     // built in functions
     var builtIns = {
       'log': function() {
@@ -63,7 +88,7 @@ log -> random -> fib -> random -> 10 \n\
 move -> 0 \n\
 move -> 2 \n\
 move -> 1 \n\
-move -> 9 \n\
+move -> 2 \n\
 move -> 3 \n\
 move -> 1 \n\
 ';

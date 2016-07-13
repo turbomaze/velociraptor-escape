@@ -13,7 +13,7 @@ var GameEngine = (function() {
   // config
   var UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
   var DIMS = [6, 6];
-  var STARTING_LOCATION = [0, 0];
+  var STARTING_LOCATION = [4, 4];
   var MOVE_EVERY = 1000; // ms
 
   // working variables
@@ -35,14 +35,14 @@ var GameEngine = (function() {
   }
 
   function executeMovement(movement) {
-    console.log('Executed movement: ' + movement);
-    var agentLocation = grid.getAgentState();
+    var agentLocation = grid.getAgentLoc();
     grid.clear(agentLocation[0], agentLocation[1]);
     grid.setState(
       agentLocation[0]+movement[0],
       agentLocation[1]+movement[1],
-      Grid.FULL
+      Grid.AGENT
     );
+    console.log('Executed movement: ' + movement);
   }
 
   function queueMovement(direction) {
