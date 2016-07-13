@@ -1,22 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <meta charset="UTF-8">
-      
-      <title>Velociraptor Escape</title>
-
-      <link rel="stylesheet" type="text/css" href="css/style.css">
-
-      <script src="js/lib/language-grammar.js"></script>
-      <script src="js/lib/language-structure.js"></script>
-      <script src="js/lib/parser.js"></script>
-      <script src="js/main.js"></script>
+    <meta charset="UTF-8">
+    <title>Velociraptor Escape</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="js/lib/language-grammar.js"></script>
+    <script src="js/lib/language-structure.js"></script>
+    <script src="js/lib/parser.js"></script>
+    <script src="js/lib/interpreter.js"></script>   
+    <script src="js/game.js" defer></script>
+    <script src="js/main.js"></script>
+    <script src="js/grid.js" defer></script>
   </head>
-  <body>
-    <h3>Velociraptor Escape</h3>
 
-    <i>Time: t =</i> <span id="time">0</span>
-    <br>
-    <i>Action: </i><span id="action">null</span>
+  <body>
+    <div class="content">
+      <div class="header">
+        <h3>Velociraptor Escape</h3>
+        <i>Time: t =</i> <span id="time">0</span>
+        <br>
+        <i>Action: </i><span id="action">null</span>
+      </div>
+		  <div id="grid">
+			  <!-- hi -->
+		  </div>
+      <div id="controls">
+        <textarea id="textbox" rows="20" autofocus placeholder="Enter text here to move..."></textarea>
+        <button id="run-btn" type="button">Run</button>
+        <button id="submit-btn" type="button">Submit</button>
+        <button id="watch-btn" type="button">Watch</button>
+      </div>
+    </div>
   </body>
 </html>
