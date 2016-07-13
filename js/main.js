@@ -32,7 +32,6 @@ var VelociraptorEscape = (function() {
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
       console.log('RUN ' + text);
-      grid.moveAgent(text);
     });
 
     var submitBtn = document.getElementById('submit-btn');
@@ -86,11 +85,17 @@ fib => n { \n\
 log -> fib -> 10 \n\
 log -> random -> fib -> random -> 10 \n\
 move -> 0 \n\
-move -> 2 \n\
 move -> 1 \n\
 move -> 2 \n\
 move -> 3 \n\
+move -> 0 \n\
 move -> 1 \n\
+move -> 2 \n\
+move -> 3 \n\
+move -> 0 \n\
+move -> 1 \n\
+move -> 2 \n\
+move -> 3 \n\
 ';
 
     interpreter.interpret(program);
