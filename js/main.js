@@ -22,7 +22,7 @@ var VelociraptorEscape = (function() {
   /******************
    * work functions */
   function initVelociraptorEscape() {
-    Level.loadLevel('02', function(level) {
+    Level.loadLevel('01', function(level) {
       GameEngine.init(level);
     });
 

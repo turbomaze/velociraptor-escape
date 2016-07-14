@@ -172,16 +172,20 @@ var GameEngine = (function() {
       if (nextFrame < level.frames.length && movementQueue.length > 0) {
         // move the velociraptors
         grid.fromFrame(level.frames[nextFrame]);
-        grid.render();
+
+        // update the time
         time.innerHTML = nextFrame;
         nextFrame += 1;
 
         // move the agent
         executeMovement(movementQueue.shift());
 
+        // render
+        grid.render();
+
         // check for collisions
         var loc = grid.getAgentLoc();
-        if (grid.getState(loc) === grid.FULL) {
+        if (grid.getState(loc[0], loc[1]) === Grid.FULL) {
           // call the onCollision callback
           clearInterval(currentInterval);
           return onCollision();
