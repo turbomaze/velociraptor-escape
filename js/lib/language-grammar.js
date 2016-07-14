@@ -7,7 +7,7 @@
 | @edit 2016/07/12 |
 \******************/
 
-var LanguageGrammar = (function() {
+var LanguageGrammar = function(BUILT_INS) {
   'use strict';
 
   // keywords
@@ -21,7 +21,6 @@ var LanguageGrammar = (function() {
   };
   
   // built in functions
-  var BUILT_INS = ['log', 'random', 'move'];
   for (var ai = 0; ai < BUILT_INS.length; ai++) {
     KEYWORDS[BUILT_INS[ai]] = BUILT_INS[ai];
   }
@@ -268,5 +267,5 @@ var LanguageGrammar = (function() {
       }
     }
   };
-})();
+};
 
