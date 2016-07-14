@@ -101,6 +101,8 @@ var GameEngine = (function() {
     done();
   }
 
+  var time = document.getElementById('time');
+  
   function watch(done) {
     var watchInterval = setInterval(watchCallback, MOVE_EVERY);
     function watchCallback() {
@@ -128,6 +130,7 @@ var GameEngine = (function() {
       if(nextFrame < level.frames.length || movementQueue.length > 0) {
         if(nextFrame < level.frames.length) {
           grid.fromFrame(level.frames[nextFrame]);
+          time.innerHTML = nextFrame;
           nextFrame += 1;
         }
         if (movementQueue.length > 0) {
