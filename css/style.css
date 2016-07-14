@@ -1,55 +1,53 @@
 /* general styles */
 html, body {
+  font-family: 'Lato', Sans-Serif;
+  color: #0b3b4b;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
   margin: 0;
   padding: 0;
-  font-family: Sans-Serif;
-	/* padding and border are included in the total width and height of the elements <-- NOT WORKING */
-	box-sizing: border-box;
+  background: #fffefa;
 }
 
-.content {
-  width: 100%;
-  margin:0 auto;
+html body .header {
+  margin-left: 2vw;
+  margin-bottom: 2vh;
+  border-bottom: 1px solid #c1c1c1;
+} html body .header h3 {
+  font-family: 'Montserrat', sans-serif;
+} html body .header li {
+  display: inline;
+  margin: 10 px;
 }
 
 #grid {
-  margin: 30px;
-	float: left;
-	width: 40%;
-  border: 2px solid green;
-  /*clumsy fix to bottom border not containing last row of boxes*/
-  padding-bottom: 120px;
-}
-
-.fullClass {
-  background: lightgreen;
-}
-
-.emptyClass {
-  background: red;
-}
-
-.agentClass {
-  background: lightblue;
+  margin-left: 2vw;
+  margin-bottom: 2vw;
+  float: left;
+  width: 57vmin;
+  height: 57vmin;
+  border: 2px solid #c1c1c1;
+  border-radius: 10px;
+  position: relative;
+} .fullClass {
+  background: #c9d41b;
+} .emptyClass {
+  background: #4ecdc4;
+} .agentClass {
+  background: #ffbc29;
 }
 
 .row {
-	margin: 0;
 	clear: left;
 	position: relative;
-}
-
-.elt {
-	margin: 0;
+} .elt {
 	float: left;
 	position: relative;
 	/*border: 2px solid black;*/
 	text-align: center;
 	overflow: hidden;
-}
-
-.elt p {
-	margin: 0;
+} .elt p {
+  margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -58,15 +56,87 @@ html, body {
 }
 
 #controls {
-  margin: 30px;
-  float: right;
-  width: 40%;
+  padding-left: 2vw;
+  padding-right: 2vw;
+  width: 80vmin;
+  height: 50vmin;
+  position: relative;
+  float: left;
+} #controls button { 
+  border: none;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+#run-btn {
+  box-shadow: 0 9px #a9b308;
+  background-color: #c9d41b;
+} #run-btn:active {
+  background-color: #c9d41b;
+  box-shadow: 0 5px #a9b308;
+  transform: translateY(4px);
+} #run-btn:hover {
+  background-color: #dae52f;
+  box-shadow: 0 9px #c9d41b;
+} #run-btn:hover:active {
+  box-shadow: 0 6px #c9d41b;
+}
+
+#submit-btn {
+  box-shadow: 0 9px #32aba2;
+  background-color: #4ecdc4;
+} #submit-btn:active {
+  background-color: #4ecdc4;
+  box-shadow: 0 5px #a9b308;
+  transform: translateY(4px);
+} #submit-btn:hover {
+  background-color: #69e7de;
+  box-shadow: 0 9px #4ecdc4;
+} #submit-btn:hover:active {
+  box-shadow: 0 6px #4ecdc4;
+}
+
+#watch-btn {
+  box-shadow: 0 9px #e4a418;
+  background-color: #ffbc29;
+} #watch-btn:active {
+  background-color: #ffbc29;
+  box-shadow: 0 5px #e4a418;
+  transform: translateY(4px);
+} #watch-btn:hover {
+  background-color: #fdc54b;
+  box-shadow: 0 9px #ffbc29;
+} #watch-btn:hover:active {
+  box-shadow: 0 6px #ffbc29;
 }
 
 textarea {
-  /* there's probably a better way to set the height/width of this box, and perhaps to make it auto-expand */
+  /* height/width awk, add auto expand */
   width: 100%;
   height: 100%;
+  border: 2px solid #c1c1c1;
+  border-left: 3px solid #c1c1c1;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+} textarea:focus {
+  border: 2px solid #0b3b4b;
+  border-left: 3px solid #0b3b4b;
 }
 
-
+@media (max-width: 480px) {
+  .content {
+    font-size: 20px !important;
+  } #grid, #controls {
+    width: 90% !important;
+    height: 90% !important;
+    clear: both;
+    margin-left: 2vw !important;
+  }
+}

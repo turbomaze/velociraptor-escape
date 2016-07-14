@@ -88,22 +88,24 @@ var Grid = (function() {
   };
 
 	GridObject.prototype.render = function() {
-    var gridHtml = document.getElementById("grid");
-		gridHtml.classList.add("width-" + this.cols);
-    gridHtml.classList.add("height-" + this.rows);
-		var div = "";
+    var content = document.getElementById("grid");
+		content.classList.add("width-" + this.cols);
+    content.classList.add("height-" + this.rows);
 		for(var i = 0; i < this.cols; i++){
-			div += "<div class=\"row\">";
+			var rowDiv = document.createElement('div');
+      rowDiv.className = 'row';
+      content.appendChild(rowDiv);
 			for(var j = 0; j < this.rows; j++){
-        var classes = "\"elt " + mappings[this.grid[i][j]] + "\"";
-        var id = "\"elt-" + i + "-" + j + "\"";
-        var p = "<p>blah" + (i*this.rows + j) + "</p>";
-        div += "<div class=" + classes + " id=" + id + ">" + p + "</div>";
+        var eltDiv = document.createElement('div');
+        eltDiv.className = 'elt ' + mappings[this.grid[i][j]];
+        eltDiv.id = 'elt-' + i + "-" + j;
+        var p = document.createElement('p');
+        p.innerHTML = 'blah ' + (i*this.rows + j);
+        eltDiv.appendChild(p);
+        rowDiv.appendChild(eltDiv);
 			}
-		div += "</div>";
 		}
-		gridHtml.innerHTML = div;
-
+		
 		var elts = document.getElementsByClassName("elt");
 		var width = 100/this.rows + "%";
 		for(var k = 0; k < elts.length; k++){

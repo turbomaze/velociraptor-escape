@@ -31,6 +31,7 @@ var VelociraptorEscape = (function() {
     runBtn.addEventListener('click',function(){
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
+      // process text
       console.log('RUN ' + text);
     });
 
