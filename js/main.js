@@ -36,7 +36,9 @@ var VelociraptorEscape = (function() {
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
       disableButtons();
-      GameEngine.run(text.replace(/\r/g, ''), function() {
+      GameEngine.run(text.replace(/\r/g, ''), function onCollision() {
+        sendAlert('Oops! A velociraptor ate you! Looks like you need to listen to <a href="https://xkcd.com/135/">Mr. Monroe</a>');
+      }, function onDone() {
         enableButtons();
       });
     });
@@ -73,6 +75,16 @@ var VelociraptorEscape = (function() {
       submitBtn.disabled = false;
       watchBtn.disabled = false;
     }
+  }
+
+  function sendAlert(message) {
+    var alertBox = document.getElementById('alert');
+    alertBox.innerHTML = message;
+  }
+
+  function clearAlert() {
+    var alertBox = document.getElementById('alert');
+    alertBox.innerHTML = '';
   }
 
   return {

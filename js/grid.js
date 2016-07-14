@@ -63,8 +63,6 @@ var Grid = (function() {
       }
     }
 
-    console.log(this.grid);
-
     this.render();
   }
 
@@ -97,10 +95,12 @@ var Grid = (function() {
       for(var j = 0; j < this.rows; j++){
         var eltDiv = document.createElement('div');
         var classState = this.grid[i][j];
-        if (i === this.agentloc[0] && j === this.agentloc[1]) {
-          classState = exports.AGENT;
-        }
         classState = mappings[classState];
+        if (this.agentloc !== false) {
+          if (i === this.agentloc[0] && j === this.agentloc[1]) {
+            classState += ' ' + mappings[exports.AGENT];
+          }
+        }
 
         if (i === this.start[0] && j === this.start[1]) {
           classState += ' start-state';
@@ -146,6 +146,10 @@ var Grid = (function() {
   };
 
   GridObject.prototype.setAgentLoc = function(loc) {
+    if (loc === false) {
+      return this.agentloc = false;
+    }
+
     if (
       loc.length == 2 &&
       !isNaN(parseInt(loc[0])) && !isNaN(parseInt(loc[1])) &&
