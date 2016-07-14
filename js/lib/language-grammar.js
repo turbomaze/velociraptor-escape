@@ -96,7 +96,7 @@ var LanguageGrammar = function(BUILT_INS) {
       'newlineStatement': '\
         spaceNewlineSpace, [ extendedSpace ], statement \
       ',
-      'statement': 'assignment | return | ifElse | if | function | call',
+      'statement': 'assignment | return | function | ifElse | if | call',
       'function': '\
         identifier, [ space ], parameterList, [ extendedSpace ], block \
       ',

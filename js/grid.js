@@ -89,6 +89,7 @@ var Grid = (function() {
 
   GridObject.prototype.render = function() {
     var content = document.getElementById("grid");
+    content.innerHTML = ''; // empty
     content.classList.add("width-" + this.cols);
     content.classList.add("height-" + this.rows);
     for(var i = 0; i < this.cols; i++){
