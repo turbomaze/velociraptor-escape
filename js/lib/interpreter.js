@@ -5,10 +5,10 @@
 | @date 2016/07/10 |
 | @edit 2016/07/13 |
 \******************/
-  
+
 var Interpreter = (function() {
   'use strict';
-
+  
   // exports
   var exports = {};
   exports.ERR_CODE_SIZE = 100;
@@ -143,7 +143,28 @@ var Interpreter = (function() {
       return self.evaluateExpression(variables, argument, stats);
     });
   
-    // handle scope stuff; functions can see 1) other functions and 2) arguments
+    // if they haven't supplied enough arguments, partially apply it
+    var numPartials = Object.keys(definition.partials).length;
+    var numArgs = numPartials + args.length;
+    if (args.length < definition.parameters.length) {
+      // copy the definition
+      var newDefinition = JSON.parse(JSON.stringify(definition));
+  
+      // partially apply it
+      for (var ai = numPartials; ai < numArgs; ai++) {
+        // add to the partials dictionary, starting from the leftmost unset param
+        var param = definition.parameters[ai];
+        newDefinition.partials[param] = args[ai - numPartials];
+      }
+  
+      // remove the partially applied parameters from the definition
+      newDefinition.parameters = newDefinition.parameters.slice(args.length);
+  
+      // return the resulting function definition
+      return newDefinition;
+    }
+  
+    // handle scope stuff; functions can see 1) other functions
     var callVariables = {};
     for (var name in variables) {
       if (
@@ -154,8 +175,19 @@ var Interpreter = (function() {
       }
     }
   
+    // 2) arguments
     for (var pi = 0; pi < definition.parameters.length; pi++) {
       callVariables[definition.parameters[pi]] = args[pi];
+    }
+  
+    // 3) partials
+    for (var partialArg in definition.partials) {
+      callVariables[partialArg] = definition.partials[partialArg];
+    }
+  
+    // 4) linked variables (from partial applications)
+    for (var name in definition.partials) {
+      callVariables[name] = definition.partials[name];
     }
   
     // actually run the function
@@ -204,11 +236,13 @@ var Interpreter = (function() {
       // it's a naked identifier; treat it as a function call
       if (statement in variables && typeof variables[statement] === 'object') {
         return this.runFunction(
-          variables, {
+          variables,
+          {
             'type': 'call',
             'name': statement,
             'arguments': []
-          }
+          },
+          stats
         );
       } else {
         throw 'ERR: lone identifier "' + statement + '" is not a valid statement.';
@@ -267,20 +301,7 @@ var Interpreter = (function() {
   
     if (typeof expression === 'string') {
       if (expression in variables) {
-        // it's a naked identifier; might be a function call
-        if (typeof variables[expression] === 'object') {
-          return this.evaluateExpression(
-            variables,
-            {
-              'type': 'call',
-              'name': expression,
-              'arguments': []
-            },
-            stats
-          );
-        } else {
-          return variables[expression];
-        }
+        return variables[expression];
       } else {
         throw 'ERR: identifier "' + expression + '" ' +
           'does not refer to an in-scope variable or function.';
@@ -442,3 +463,4 @@ var Interpreter = (function() {
 
   return exports;
 })();
+

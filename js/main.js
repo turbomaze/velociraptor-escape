@@ -2,7 +2,7 @@
 |   Velociraptor   |
 |      Escape      |
 | @author Anthony  |
-| @version 0.2     |
+| @version 0.3     |
 | @date 2016/07/07 |
 | @edit 2016/07/13 |
 \******************/
@@ -28,13 +28,18 @@ var VelociraptorEscape = (function() {
 
     //button things
     var runBtn = document.getElementById('run-btn');
+    var submitBtn = document.getElementById('submit-btn');
+    var watchBtn = document.getElementById('watch-btn');
+
     runBtn.addEventListener('click',function() {
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
-      console.log('RUN ' + text);
+      disableButtons();
+      GameEngine.run(text.replace(/\r/g, ''), function() {
+        enableButtons();
+      });
     });
 
-    var submitBtn = document.getElementById('submit-btn');
     submitBtn.addEventListener('click', function() {
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
@@ -42,7 +47,6 @@ var VelociraptorEscape = (function() {
       console.log('SUBMIT ' + text);
     });
 
-    var watchBtn = document.getElementById('watch-btn');
     watchBtn.addEventListener('click',function(){
       disableButtons();
       GameEngine.watch(function() {

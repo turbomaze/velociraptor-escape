@@ -2,7 +2,7 @@
 |     Language     |
 |     Grammar      |
 | @author Anthony  |
-| @version 0.2     |
+| @version 0.3     |
 | @date 2016/07/07 |
 | @edit 2016/07/12 |
 \******************/
@@ -96,7 +96,7 @@ var LanguageGrammar = function(BUILT_INS) {
       'newlineStatement': '\
         spaceNewlineSpace, [ extendedSpace ], statement \
       ',
-      'statement': 'assignment | return | ifElse | if | function | call',
+      'statement': 'assignment | return | function | ifElse | if | call',
       'function': '\
         identifier, [ space ], parameterList, [ extendedSpace ], block \
       ',
