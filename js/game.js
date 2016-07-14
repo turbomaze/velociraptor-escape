@@ -20,19 +20,25 @@ var GameEngine = (function() {
   var grid;
   var nextFrame;
   var interpreter;
+  var currentInterval;
 
   function initGameEngine(level_) {
     // init misc variables
     movementQueue = [];
     nextFrame = 1;
+    currentInterval = null;
 
     // setup the level
     level = level_;
-    grid = new Grid.Grid(level.dimensions[0], level.dimensions[1], level.start);
+    MOVE_EVERY = level.rate;
+    grid = new Grid.Grid(
+      level.dimensions[0], level.dimensions[1],
+      level.start, level.finish
+    );
 
     // setup the grid and render it
-    grid.render();
     grid.fromFrame(level.frames[0]);
+    grid.render();
 
     // setup the interpreter
     var builtIns = {
@@ -68,13 +74,10 @@ var GameEngine = (function() {
 
   function executeMovement(movement) {
     var agentLocation = grid.getAgentLoc();
-    grid.clear(agentLocation[0], agentLocation[1]);
-    grid.setState(
-      agentLocation[0]+movement[0],
-      agentLocation[1]+movement[1],
-      Grid.AGENT
-    );
-    console.log('Executed movement: ' + movement);
+    grid.setAgentLoc([
+      agentLocation[0] + movement[0],
+      agentLocation[1] + movement[1]
+    ]);
   }
 
   function queueMovement(direction) {
@@ -96,40 +99,72 @@ var GameEngine = (function() {
     }
   }
 
+  function reset(done) {
+    clearInterval(currentInterval);
+    movementQueue = [];
+    grid.fromFrame(level.frames[0]);
+    grid.setAgentLoc(grid.start);
+    grid.render();
+    done();
+  }
+
+  var time = document.getElementById('time');
+  
   function watch(done) {
-    var watchInterval = setInterval(watchCallback, MOVE_EVERY);
+    currentInterval = setInterval(watchCallback, MOVE_EVERY);
+    grid.setAgentLoc(false);
+    grid.render();
     function watchCallback() {
       if(nextFrame < level.frames.length) {
         grid.fromFrame(level.frames[nextFrame]);
+        grid.render();
+        time.innerHTML = nextFrame;
         nextFrame += 1;
       } else {
-        clearInterval(watchInterval);
-        done();
+        clearInterval(currentInterval);
+        grid.setAgentLoc(grid.start);
+        grid.render();
         nextFrame = 0;
+        done();
       }
     }
   }
 
-  function run(program, done) {
-    grid.clearAll();
-    grid.render();
+  function run(program, onCollision, onSuccess, done) {
     grid.fromFrame(level.frames[0]);
-    grid.setState(level.start[0], level.start[1], Grid.AGENT);
+    grid.setAgentLoc(level.start);
+    grid.render();
     
+    // get the movements queued by the program
     runProgram(program);
 
-    var runInterval = setInterval(runCallback, MOVE_EVERY);
+    currentInterval = setInterval(runCallback, MOVE_EVERY);
     function runCallback() {
-      if(nextFrame < level.frames.length || movementQueue.length > 0) {
-        if(nextFrame < level.frames.length) {
-          grid.fromFrame(level.frames[nextFrame]);
-          nextFrame += 1;
+      if (nextFrame < level.frames.length && movementQueue.length > 0) {
+        // move the velociraptors
+        grid.fromFrame(level.frames[nextFrame]);
+        grid.render();
+        time.innerHTML = nextFrame;
+        nextFrame += 1;
+
+        // move the agent
+        executeMovement(movementQueue.shift());
+
+        // check for collisions
+        var loc = grid.getAgentLoc();
+        if (grid.getState(loc) === grid.FULL) {
+          // call the onCollision callback
+          clearInterval(currentInterval);
+          return onCollision();
         }
-        if (movementQueue.length > 0) {
-          executeMovement(movementQueue.shift());
+
+        // check for success
+        if (loc[0] === grid.end[0] && loc[1] === grid.end[1]) {
+          clearInterval(currentInterval);
+          return onSuccess();
         }
       } else {
-        clearInterval(runInterval);
+        clearInterval(currentInterval);
         done();
         nextFrame = 0;
       }
@@ -140,11 +175,7 @@ var GameEngine = (function() {
     init: initGameEngine,
     move: queueMovement,
     runProgram: runProgram,
-    UP: UP,
-    RIGHT: RIGHT,
-    DOWN: DOWN,
-    LEFT: LEFT,
-    watch: watch,
-    run: run
+    UP: UP, RIGHT: RIGHT, DOWN: DOWN, LEFT: LEFT,
+    watch: watch, run: run, reset: reset
   };
 })();

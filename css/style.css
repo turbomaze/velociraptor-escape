@@ -1,7 +1,8 @@
 /* general styles */
 html, body {
-  font-family: 'Lato', Sans-Serif;
+  font-family: 'xkcd', Sans-Serif;
   color: #0b3b4b;
+  font-size: 12px;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   margin: 0;
@@ -10,14 +11,18 @@ html, body {
 }
 
 html body .header {
+  font-size: 16px;
   margin-left: 2vw;
   margin-bottom: 2vh;
   border-bottom: 1px solid #c1c1c1;
-} html body .header h3 {
-  font-family: 'Montserrat', sans-serif;
 } html body .header li {
   display: inline;
-  margin: 10 px;
+  margin-right: 20px;
+}
+
+@font-face {
+  font-family: 'xkcd';
+  src: url('../xkcd.otf') format('opentype');
 }
 
 #grid {
@@ -32,9 +37,17 @@ html body .header {
 } .fullClass {
   background: #c9d41b;
 } .emptyClass {
-  background: #4ecdc4;
+  background: #fffefa;
 } .agentClass {
   background: #ffbc29;
+} .start-state {
+  box-shadow: 0px 0px 0px 3px #ffe86b;
+  z-index: 3000000000;
+} .end-state {
+  box-shadow: 0px 0px 0px 3px #0b3b4b;
+  z-index: 3000000000;
+} .fullClass.agentClass {
+  background: red;
 }
 
 .row {
@@ -46,19 +59,12 @@ html body .header {
   /*border: 2px solid black;*/
   text-align: center;
   overflow: hidden;
-} .elt p {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-right: -50%;
-  transform: translate(-50%, -50%)
 }
 
 #controls {
   padding-left: 2vw;
   padding-right: 2vw;
-  width: 80vmin;
+  width: 70vmin;
   height: 50vmin;
   position: relative;
   float: left;
@@ -68,7 +74,8 @@ html body .header {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 14px;
+  font-family: 'xkcd', sans-serif;
   border-radius: 10px;
   cursor: pointer;
   outline: none;
@@ -116,6 +123,20 @@ html body .header {
   box-shadow: 0 6px #ffbc29;
 }
 
+#reset-btn {
+  box-shadow: 0 9px #DB1F61;
+  background-color: #f04681;
+} #reset-btn:active {
+  background-color: #f04681;
+  box-shadow: 0 5px #db1f61;
+  transform: translateY(4px);
+} #reset-btn:hover {
+  background-color: #f76095;
+  box-shadow: 0 9px #f7367a;
+} #reset-btn:hover:active {
+  box-shadow: 0 6px #f7367a;
+}
+
 textarea {
   /* height/width awk, add auto expand */
   width: 100%;
@@ -125,12 +146,13 @@ textarea {
   border-radius: 10px;
   font-size: 14px;
   outline: none;
+  margin-bottom: 1vh;
 } textarea:focus {
   border: 2px solid #0b3b4b;
   border-left: 3px solid #0b3b4b;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .content {
     font-size: 20px !important;
   } #grid, #controls {
