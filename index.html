@@ -11,7 +11,7 @@
     <script src="js/lib/parser.js"></script>
     <script src="js/lib/interpreter.js"></script>
     <script src="js/game.js" defer></script>
-    <script src="js/main.js"></script>
+    <script src="js/main.js" defer></script>
     <script src="js/level.js" defer></script>
     <script src="js/grid.js" defer></script>
   </head>
@@ -21,8 +21,9 @@
       <div class="header">
         <h3>VELOCIRAPTOR ESCAPE</h3>
         <ul>
-          <li><i>Time: t =</i> <span id="time">0</span></li>
-          <li><i>Action: </i><span id="action">null</span></li>
+          <li>Time: t = <span id="time">0</span></li>
+          <li>Action: <span id="action">null</span></li>
+          <li><span id='alert'></span></li>
         </ul>
       </div>
       <div id="grid">

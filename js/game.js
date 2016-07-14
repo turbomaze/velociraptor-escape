@@ -20,11 +20,13 @@ var GameEngine = (function() {
   var grid;
   var nextFrame;
   var interpreter;
+  var currentInterval;
 
   function initGameEngine(level_) {
     // init misc variables
     movementQueue = [];
     nextFrame = 1;
+    currentInterval = null;
 
     // setup the level
     level = level_;
@@ -76,7 +78,6 @@ var GameEngine = (function() {
       agentLocation[0] + movement[0],
       agentLocation[1] + movement[1]
     ]);
-    console.log('Executed movement: ' + movement);
   }
 
   function queueMovement(direction) {
@@ -99,52 +100,71 @@ var GameEngine = (function() {
   }
 
   function reset(done) {
+    clearInterval(currentInterval);
+    movementQueue = [];
     grid.fromFrame(level.frames[0]);
     grid.setAgentLoc(grid.start);
     grid.render();
     done();
   }
 
+  var time = document.getElementById('time');
+  
   function watch(done) {
-    var watchInterval = setInterval(watchCallback, MOVE_EVERY);
-    grid.setAgentLoc(grid.start);
+    currentInterval = setInterval(watchCallback, MOVE_EVERY);
+    grid.setAgentLoc(false);
     grid.render();
     function watchCallback() {
       if(nextFrame < level.frames.length) {
         grid.fromFrame(level.frames[nextFrame]);
         grid.render();
+        time.innerHTML = nextFrame;
         nextFrame += 1;
       } else {
-        clearInterval(watchInterval);
+        clearInterval(currentInterval);
         grid.setAgentLoc(grid.start);
-        done();
+        grid.render();
         nextFrame = 0;
+        done();
       }
     }
   }
 
-  function run(program, done) {
-    grid.clearAll();
-    grid.render();
-    grid.setState(level.start[0], level.start[1], Grid.AGENT);
+  function run(program, onCollision, onSuccess, done) {
     grid.fromFrame(level.frames[0]);
+    grid.setAgentLoc(level.start);
     grid.render();
     
+    // get the movements queued by the program
     runProgram(program);
 
-    var runInterval = setInterval(runCallback, MOVE_EVERY);
+    currentInterval = setInterval(runCallback, MOVE_EVERY);
     function runCallback() {
-      if(nextFrame < level.frames.length || movementQueue.length > 0) {
-        if(nextFrame < level.frames.length) {
-          grid.fromFrame(level.frames[nextFrame]);
-          grid.render();
-          nextFrame += 1;
+      if (nextFrame < level.frames.length && movementQueue.length > 0) {
+        // move the velociraptors
+        grid.fromFrame(level.frames[nextFrame]);
+        grid.render();
+        time.innerHTML = nextFrame;
+        nextFrame += 1;
+
+        // move the agent
+        executeMovement(movementQueue.shift());
+
+        // check for collisions
+        var loc = grid.getAgentLoc();
+        if (grid.getState(loc) === grid.FULL) {
+          // call the onCollision callback
+          clearInterval(currentInterval);
+          return onCollision();
         }
-        if (movementQueue.length > 0) {
-          executeMovement(movementQueue.shift());
+
+        // check for success
+        if (loc[0] === grid.end[0] && loc[1] === grid.end[1]) {
+          clearInterval(currentInterval);
+          return onSuccess();
         }
       } else {
-        clearInterval(runInterval);
+        clearInterval(currentInterval);
         done();
         nextFrame = 0;
       }
