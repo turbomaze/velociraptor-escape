@@ -31,6 +31,26 @@ var VelociraptorEscape = (function() {
     var submitBtn = document.getElementById('submit-btn');
     var watchBtn = document.getElementById('watch-btn');
     var resetBtn = document.getElementById('reset-btn');
+    var prevLevelBtn = document.getElementById('prev-level-btn');
+    var nextLevelBtn = document.getElementById('next-level-btn');
+
+    var base_url = "http://localhost:8080/";
+    var username = "randall"
+    //Add prev/next level buttons
+    var level = window.location.href.split("/").pop();
+    if(level=="" || level=="0"){
+      level = 0;
+      prevLevelBtn.className += " disabled";
+      nextLevelBtn.href = base_url + username + "/ "+(level+1).toString();
+    }
+    else{
+      level = parseInt(level);
+      nextLevelBtn.href = base_url + username + "/ "+(level-1).toString();
+      nextLevelBtn.href = base_url + username + "/ "+ (level+1).toString();
+    }
+
+
+
 
     runBtn.addEventListener('click',function() {
       var textarea = document.getElementById('textbox');
@@ -48,7 +68,7 @@ var VelociraptorEscape = (function() {
           sendAlert('Congratulations! You beat the level! Click "submit" to validate your solution on the server and move on.');
           enableButtons();
         },
-        
+
         function onDone() {
           enableButtons();
         }

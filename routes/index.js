@@ -6,7 +6,7 @@ var User = require('../models/users');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.sendFile(path.join(__dirname + '/../../index.html'));
+  res.sendFile(path.join(__dirname + '/../../index.html')); // This probably throws an error.
 });
 
 /* Post level. */
@@ -34,7 +34,7 @@ router.post('/level', function(req, res, next) {
 				res.send(null);
 			} else {
 				console.log(user);
-				res.send("You were registered, continue onto the first leve;");			
+				res.send("You were registered, continue onto the first level;");
 			}
 
 	});
