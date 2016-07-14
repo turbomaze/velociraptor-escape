@@ -30,6 +30,7 @@ var VelociraptorEscape = (function() {
     var runBtn = document.getElementById('run-btn');
     var submitBtn = document.getElementById('submit-btn');
     var watchBtn = document.getElementById('watch-btn');
+    var resetBtn = document.getElementById('reset-btn');
 
     runBtn.addEventListener('click',function() {
       var textarea = document.getElementById('textbox');
@@ -47,9 +48,16 @@ var VelociraptorEscape = (function() {
       console.log('SUBMIT ' + text);
     });
 
-    watchBtn.addEventListener('click',function(){
+    watchBtn.addEventListener('click', function(){
       disableButtons();
       GameEngine.watch(function() {
+        enableButtons();
+      });
+    });
+
+    resetBtn.addEventListener('click', function(){
+      disableButtons();
+      GameEngine.reset(function() {
         enableButtons();
       });
     });

@@ -96,6 +96,11 @@ var GameEngine = (function() {
     }
   }
 
+  function reset(done) {
+    grid.fromFrame(level.frames[0]);
+    done();
+  }
+
   function watch(done) {
     var watchInterval = setInterval(watchCallback, MOVE_EVERY);
     function watchCallback() {
@@ -140,11 +145,7 @@ var GameEngine = (function() {
     init: initGameEngine,
     move: queueMovement,
     runProgram: runProgram,
-    UP: UP,
-    RIGHT: RIGHT,
-    DOWN: DOWN,
-    LEFT: LEFT,
-    watch: watch,
-    run: run
+    UP: UP, RIGHT: RIGHT, DOWN: DOWN, LEFT: LEFT,
+    watch: watch, run: run, reset: reset
   };
 })();

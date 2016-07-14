@@ -32,7 +32,7 @@ html body .header {
 } .fullClass {
   background: #c9d41b;
 } .emptyClass {
-  background: #4ecdc4;
+  background: #fffefa;
 } .agentClass {
   background: #ffbc29;
 }
@@ -114,6 +114,20 @@ html body .header {
   box-shadow: 0 9px #ffbc29;
 } #watch-btn:hover:active {
   box-shadow: 0 6px #ffbc29;
+}
+
+#reset-btn {
+  box-shadow: 0 9px #DB1F61;
+  background-color: #f04681;
+} #reset-btn:active {
+  background-color: #f04681;
+  box-shadow: 0 5px #db1f61;
+  transform: translateY(4px);
+} #reset-btn:hover {
+  background-color: #f76095;
+  box-shadow: 0 9px #f7367a;
+} #reset-btn:hover:active {
+  box-shadow: 0 6px #f7367a;
 }
 
 textarea {

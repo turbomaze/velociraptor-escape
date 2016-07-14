@@ -4,7 +4,7 @@
     "code": 100,
     "compute": 1000
   },
-  "start": [4, 1],
+  "start": [1, 1],
   "finish": [9, 4],
   "frames": [
     [

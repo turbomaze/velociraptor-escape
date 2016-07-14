@@ -101,7 +101,7 @@ var Grid = (function() {
         eltDiv.className = 'elt ' + mappings[this.grid[i][j]];
         eltDiv.id = 'elt-' + i + "-" + j;
         var p = document.createElement('p');
-        p.innerHTML = 'blah ' + (i*this.rows + j);
+        p.innerHTML = i*this.rows + j;
         eltDiv.appendChild(p);
         rowDiv.appendChild(eltDiv);
       }
