@@ -38,14 +38,14 @@ html body .header {
 }
 
 .row {
-	clear: left;
-	position: relative;
+  clear: left;
+  position: relative;
 } .elt {
-	float: left;
-	position: relative;
-	/*border: 2px solid black;*/
-	text-align: center;
-	overflow: hidden;
+  float: left;
+  position: relative;
+  /*border: 2px solid black;*/
+  text-align: center;
+  overflow: hidden;
 } .elt p {
   margin: 0;
   position: absolute;

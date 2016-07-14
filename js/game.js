@@ -17,16 +17,16 @@ var GameEngine = (function() {
   // working variables
   var movementQueue;
   var level;
-	var grid;
+  var grid;
   var nextFrame;
   var interpreter;
 
   function initGameEngine(level_) {
-		// init misc variables
+    // init misc variables
     movementQueue = [];
-		nextFrame = 1;
+    nextFrame = 1;
 
-		// setup the level
+    // setup the level
     level = level_;
     grid = new Grid.Grid(level.dimensions[0], level.dimensions[1], level.start);
 
