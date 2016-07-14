@@ -2,7 +2,7 @@
 |     Language     |
 |     Grammar      |
 | @author Anthony  |
-| @version 0.3     |
+| @version 0.4     |
 | @date 2016/07/07 |
 | @edit 2016/07/12 |
 \******************/

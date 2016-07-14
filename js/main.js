@@ -2,7 +2,7 @@
 |   Velociraptor   |
 |      Escape      |
 | @author Anthony  |
-| @version 0.3     |
+| @version 0.4     |
 | @date 2016/07/07 |
 | @edit 2016/07/13 |
 \******************/
@@ -22,7 +22,7 @@ var VelociraptorEscape = (function() {
   /******************
    * work functions */
   function initVelociraptorEscape() {
-    Level.loadLevel('02', function(level) {
+    Level.loadLevel('01', function(level) {
       GameEngine.init(level);
     });
 
@@ -36,11 +36,23 @@ var VelociraptorEscape = (function() {
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
       disableButtons();
-      GameEngine.run(text.replace(/\r/g, ''), function onCollision() {
-        sendAlert('Oops! A velociraptor ate you! Looks like you need to listen to <a href="https://xkcd.com/135/">Mr. Monroe</a>');
-      }, function onDone() {
-        enableButtons();
-      });
+      GameEngine.run(
+        text.replace(/\r/g, ''),
+
+        function onCollision() {
+          sendAlert('Oops! A velociraptor ate you! Looks like you need to listen to <a href="https://xkcd.com/135/">Mr. Monroe</a>');
+          enableButtons();
+        },
+
+        function onSuccess() {
+          sendAlert('Congratulations! You beat the level! Click "submit" to validate your solution on the server and move on.');
+          enableButtons();
+        },
+        
+        function onDone() {
+          enableButtons();
+        }
+      );
     });
 
     submitBtn.addEventListener('click', function() {
