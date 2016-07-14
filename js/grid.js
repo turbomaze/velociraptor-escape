@@ -1,6 +1,6 @@
 /* Creates grid
  * @author Claire
- * @version 0.3
+ * @version 0.4
  * @date 2016/07/10
  * @edit 2016/07/13
  */
