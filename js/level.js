@@ -16,6 +16,7 @@
      this.limits = config.limits;
      this.dimensions = config.dimensions;
      this.frames = config.frames;
+     this.rate = config.rate;
    }
 
    exports.loadLevel = function(name, callback) {

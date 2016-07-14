@@ -37,9 +37,11 @@ var Grid = (function() {
   }
 
   // meat and potatoes
-  function GridObject(n, m, start) {
+  function GridObject(n, m, start, end) {
     this.cols = m;
     this.rows = n;
+    this.start = start;
+    this.end = end;
 
     // set agent location
     this.agentloc = [0, 0];
@@ -48,9 +50,9 @@ var Grid = (function() {
       !isNaN(parseInt(start[0])) && !isNaN(parseInt(start[1])) &&
       isValid(start[0], start[1], this.cols, this.rows)
     ) {
-      this.agentloc = start;
+      this.agentloc = this.start;
     } else {
-      throw '3rd argument is agent\'s location in 2D [x, y]';
+      // throw '3rd argument is agent\'s location in 2D [x, y]';
     }
 
     this.grid = new Array(this.cols);
@@ -60,7 +62,10 @@ var Grid = (function() {
         this.grid[i][j] = exports.EMPTY;
       }
     }
-    this.grid[this.agentloc[0]][this.agentloc[1]] = exports.AGENT;
+
+    console.log(this.grid);
+
+    this.render();
   }
 
   GridObject.prototype.getState = function(x, y) {
@@ -74,14 +79,7 @@ var Grid = (function() {
 
   GridObject.prototype.setState = function(x, y, state) {
     if (isValid(x, y, this.cols, this.rows) && this.getState(x, y) != state) {
-      //needs more validation that state is an acceptable state
-      var cell = document.getElementById("elt-" + x + "-" + y);
-      cell.classList.remove(mappings[this.getState(x, y)]);
       this.grid[x][y] = state;
-      cell.classList.add(mappings[state]);
-      if (state == exports.AGENT) {
-        this.agentloc = [x, y];
-      }
     } else {
       return {err: "not ok state"};
     }
@@ -98,11 +96,20 @@ var Grid = (function() {
       content.appendChild(rowDiv);
       for(var j = 0; j < this.rows; j++){
         var eltDiv = document.createElement('div');
-        eltDiv.className = 'elt ' + mappings[this.grid[i][j]];
+        var classState = this.grid[i][j];
+        if (i === this.agentloc[0] && j === this.agentloc[1]) {
+          classState = exports.AGENT;
+        }
+        classState = mappings[classState];
+
+        if (i === this.start[0] && j === this.start[1]) {
+          classState += ' start-state';
+        } else if (i === this.end[0] && j === this.end[1]) {
+          classState += ' end-state';
+        }
+
+        eltDiv.className = 'elt ' + classState;
         eltDiv.id = 'elt-' + i + "-" + j;
-        var p = document.createElement('p');
-        p.innerHTML = i*this.rows + j;
-        eltDiv.appendChild(p);
         rowDiv.appendChild(eltDiv);
       }
     }
@@ -138,10 +145,20 @@ var Grid = (function() {
     return this.agentloc;
   };
 
+  GridObject.prototype.setAgentLoc = function(loc) {
+    if (
+      loc.length == 2 &&
+      !isNaN(parseInt(loc[0])) && !isNaN(parseInt(loc[1])) &&
+      isValid(loc[0], loc[1], this.cols, this.rows)
+    ) {
+      this.agentloc = loc;
+    }
+  };
+
   GridObject.prototype.fromFrame = function(frame) {
     for(var i = 0; i < this.cols; i++) {
       for(var j = 0; j < this.rows; j++) {
-        if(this.getState(i,j) != exports.AGENT) this.setState(i,j, frame[i][j]);
+        this.setState(i, j, frame[i][j]);
       }
     }
   };

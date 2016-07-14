@@ -35,6 +35,12 @@ html body .header {
   background: #fffefa;
 } .agentClass {
   background: #ffbc29;
+} .start-state {
+  box-shadow: 0px 0px 0px 3px red;
+  z-index: 3000000000;
+} .end-state {
+  box-shadow: 0px 0px 0px 3px green;
+  z-index: 3000000000;
 }
 
 .row {
@@ -46,13 +52,6 @@ html body .header {
   /*border: 2px solid black;*/
   text-align: center;
   overflow: hidden;
-} .elt p {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-right: -50%;
-  transform: translate(-50%, -50%)
 }
 
 #controls {

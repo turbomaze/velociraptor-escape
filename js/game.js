@@ -28,11 +28,15 @@ var GameEngine = (function() {
 
     // setup the level
     level = level_;
-    grid = new Grid.Grid(level.dimensions[0], level.dimensions[1], level.start);
+    MOVE_EVERY = level.rate;
+    grid = new Grid.Grid(
+      level.dimensions[0], level.dimensions[1],
+      level.start, level.finish
+    );
 
     // setup the grid and render it
-    grid.render();
     grid.fromFrame(level.frames[0]);
+    grid.render();
 
     // setup the interpreter
     var builtIns = {
@@ -68,12 +72,10 @@ var GameEngine = (function() {
 
   function executeMovement(movement) {
     var agentLocation = grid.getAgentLoc();
-    grid.clear(agentLocation[0], agentLocation[1]);
-    grid.setState(
-      agentLocation[0]+movement[0],
-      agentLocation[1]+movement[1],
-      Grid.AGENT
-    );
+    grid.setAgentLoc([
+      agentLocation[0] + movement[0],
+      agentLocation[1] + movement[1]
+    ]);
     console.log('Executed movement: ' + movement);
   }
 
@@ -98,17 +100,23 @@ var GameEngine = (function() {
 
   function reset(done) {
     grid.fromFrame(level.frames[0]);
+    grid.setAgentLoc(grid.start);
+    grid.render();
     done();
   }
 
   function watch(done) {
     var watchInterval = setInterval(watchCallback, MOVE_EVERY);
+    grid.setAgentLoc(grid.start);
+    grid.render();
     function watchCallback() {
       if(nextFrame < level.frames.length) {
         grid.fromFrame(level.frames[nextFrame]);
+        grid.render();
         nextFrame += 1;
       } else {
         clearInterval(watchInterval);
+        grid.setAgentLoc(grid.start);
         done();
         nextFrame = 0;
       }
@@ -118,8 +126,9 @@ var GameEngine = (function() {
   function run(program, done) {
     grid.clearAll();
     grid.render();
-    grid.fromFrame(level.frames[0]);
     grid.setState(level.start[0], level.start[1], Grid.AGENT);
+    grid.fromFrame(level.frames[0]);
+    grid.render();
     
     runProgram(program);
 
@@ -128,6 +137,7 @@ var GameEngine = (function() {
       if(nextFrame < level.frames.length || movementQueue.length > 0) {
         if(nextFrame < level.frames.length) {
           grid.fromFrame(level.frames[nextFrame]);
+          grid.render();
           nextFrame += 1;
         }
         if (movementQueue.length > 0) {
