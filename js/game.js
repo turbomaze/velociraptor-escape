@@ -11,7 +11,7 @@ var GameEngine = (function() {
   'use strict';
 
   // config
-  var UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3;
+  var UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3, PAUSE = 4;
   var MOVE_EVERY = 200; // ms
 
   // working variables
@@ -25,7 +25,7 @@ var GameEngine = (function() {
   function initGameEngine(level_) {
     // init misc variables
     movementQueue = [];
-    nextFrame = 1;
+    nextFrame = 0;
     currentInterval = null;
 
     // setup the level
@@ -49,6 +49,31 @@ var GameEngine = (function() {
 
       'random': function(n) {
         return Math.floor(n * Math.random());
+      },
+
+      'moveUp': function() {
+        queueMovement(UP);
+        return undefined;
+      },
+
+      'moveRight': function() {
+        queueMovement(RIGHT);
+        return undefined;
+      },
+
+      'moveDown': function() {
+        queueMovement(DOWN);
+        return undefined;
+      },
+
+      'dontMove': function() {
+        queueMovement(PAUSE);
+        return undefined;
+      },
+
+      'moveLeft': function() {
+        queueMovement(LEFT);
+        return undefined;
       },
 
       'move': function(direction) {
@@ -83,16 +108,18 @@ var GameEngine = (function() {
   function queueMovement(direction) {
     switch (direction) {
       case UP:
-        movementQueue.push([0, -1]);
+        movementQueue.push([-1, 0]);
         break;
       case RIGHT:
-        movementQueue.push([1, 0]);
-        break;
-      case DOWN:
         movementQueue.push([0, 1]);
         break;
+      case DOWN:
+        movementQueue.push([1, 0]);
+        break;
       case LEFT:
-        movementQueue.push([-1, 0]);
+        movementQueue.push([0, -1]);
+      case PAUSE:
+        movementQueue.push([0, 0]);
         break;
       default:
         throw 'ERR: invalid movement direction supplied.';
@@ -105,6 +132,8 @@ var GameEngine = (function() {
     grid.fromFrame(level.frames[0]);
     grid.setAgentLoc(grid.start);
     grid.render();
+    time.innerHTML = 0;
+    nextFrame = 0;
     done();
   }
 
