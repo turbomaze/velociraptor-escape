@@ -26,7 +26,7 @@ app.get('/:userName/:levelId', function(req, res) {
 });
 
 app.get('/:userName', function(req, res) {
-  res.redirect('/'+req.params.userName+'/1');
+  res.redirect('/'+req.params.userName+'/0');
 });
 
 app.post('/:userName/:levelId/validate', function(req, res) {

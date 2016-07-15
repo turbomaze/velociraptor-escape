@@ -34,19 +34,22 @@ var VelociraptorEscape = (function() {
     var prevLevelBtn = document.getElementById('prev-level-btn');
     var nextLevelBtn = document.getElementById('next-level-btn');
 
-    var base_url = "http://localhost:8080/";
-    var username = "randall"
+    var base_url = "/";
+    var maxLevel = 10; // inclusive
     //Add prev/next level buttons
-    var level = window.location.href.split("/").pop();
-    if(level=="" || level=="0"){
-      level = 0;
+    var url = window.location.href.split("/");
+    var username = url[url.length-2];
+    var levelId = url[url.length-1];
+    levelId = parseInt(levelId);
+    if (levelId === 0) {
       prevLevelBtn.className += " disabled";
-      nextLevelBtn.href = base_url + username + "/ "+(level+1).toString();
-    }
-    else{
-      level = parseInt(level);
-      nextLevelBtn.href = base_url + username + "/ "+(level-1).toString();
-      nextLevelBtn.href = base_url + username + "/ "+ (level+1).toString();
+      nextLevelBtn.href = base_url + username + "/1";
+    } else if (levelId > 0 && levelId < 10) {
+      prevLevelBtn.href = base_url + username + "/"+(levelId-1).toString();
+      nextLevelBtn.href = base_url + username + "/"+ (levelId+1).toString();
+    } else if (levelId === 10) {
+      prevLevelBtn.href = base_url + username + "/"+ (levelId-1).toString();
+      nextLevelBtn.className += " disabled";
     }
 
     runBtn.addEventListener('click',function() {
