@@ -163,7 +163,7 @@ var VelociraptorEscape = (function() {
 
 // picoModal popup thing
   var modal = picoModal({
-      content: "<h4>You're in a room with one hundred velociraptors. In order to survive... program your way out! <i>BUT IN WHAT LANGUAGE?</i></h4><h5> The rules are simple. Find a way to move your agent to the finish without <br>getting hit by any velociraptors.<br> <br> These are the built-in functions: <br> <code>moveUp, moveDown, moveLeft, moveRight</code> <br> <br>I wonder if there are others? What if there are built-ins that take parameters? <br> <br> What if <em>you   </em> had the power to create your own functions? <br> <br> But these raptors are smart, and listing out a step-by-step plan won't work... <br>Only elegant code programmed with finesse will survive these 'raptors. <br> <br></h5>",
+      content: "<h4>You're in a room with one hundred velociraptors. In order to survive... program your way out! <i>BUT IN WHAT LANGUAGE?</i></h4><h5> The rules are simple. Find a way to move your agent to the finish without <br>getting hit by any velociraptors.<br> <br> These are the built-in functions (don't use parens): <br> <code>moveUp, moveDown, moveLeft, moveRight</code> <br> <br>I wonder if there are others? What if there are built-ins that take parameters? <br> <br> What if <em>you   </em> had the power to create your own functions? <br> <br> But these raptors are smart, and listing out a step-by-step plan won't work... <br>Only elegant code programmed with finesse will survive these 'raptors. <br> <br></h5>",
       closeHtml: "<span>GOT IT !</span>",
       modalStyles:{
           color: "#0b3b4b",
