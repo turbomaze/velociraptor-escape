@@ -21,6 +21,10 @@ function validateProgram(program) {
   return true;
 }
 
+app.get('/', function(req, res) {
+  res.sendfile('homepage.html', {root: './public'});
+});
+
 app.get('/:userName/:levelId', function(req, res) {
   res.sendfile('index.html', {root: './public'});
 });
