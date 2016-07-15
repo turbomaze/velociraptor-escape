@@ -15,6 +15,15 @@ module.exports = (function () {
     .filter(function(name) { return name.endsWith(".json"); })
     .map(function(name) { return name.substring(0, name.length - 5); });
 
+  var LEVELS = {};
+  VALID_LEVELS.forEach(function(levelId) {
+    LEVELS[levelId] = require('./public/levels/'+levelId+'.json');
+  });
+
+  function getLevelConfig(levelId) {
+    return LEVELS[levelId];
+  }
+
   function isValidLevel(levelId) {
     return  VALID_LEVELS.indexOf(levelId !== -1);
   }
@@ -55,5 +64,5 @@ module.exports = (function () {
               .digest('hex');
   };
 
-  return {User: User, isValidLevel: isValidLevel};
+  return {User: User, isValidLevel: isValidLevel, getLevelConfig: getLevelConfig};
 })();
