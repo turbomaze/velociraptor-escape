@@ -35,7 +35,7 @@ var VelociraptorEscape = (function() {
     var nextLevelBtn = document.getElementById('next-level-btn');
 
     var base_url = "/play/";
-    var maxLevel = 5; // inclusive
+    var maxLevel = 4; // inclusive
     //Add prev/next level buttons
     var url = window.location.href.split("/");
     var username = url[url.length-2];
