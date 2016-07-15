@@ -53,23 +53,28 @@ var VelociraptorEscape = (function() {
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
       disableButtons();
-      GameEngine.run(
-        text.replace(/\r/g, ''),
+      try {
+        GameEngine.run(
+          text.replace(/\r/g, ''),
 
-        function onCollision() {
-          sendAlert('Oops! A velociraptor ate you! Looks like you need to listen to <a href="https://xkcd.com/135/">Mr. Monroe</a>');
-          enableButtons();
-        },
+          function onCollision() {
+            sendAlert('Oops! A velociraptor ate you! Looks like you need to listen to <a href="https://xkcd.com/135/">Mr. Monroe</a>');
+            enableButtons();
+          },
 
-        function onSuccess() {
-          sendAlert('Congratulations! You beat the level! Click "submit" to validate your solution on the server and move on.');
-          enableButtons();
-        },
+          function onSuccess() {
+            sendAlert('Congratulations! You beat the level! Click "submit" to validate your solution on the server and move on.');
+            enableButtons();
+          },
 
-        function onDone() {
-          enableButtons();
-        }
-      );
+          function onDone() {
+            enableButtons();
+          }
+        );
+      } catch (e) {
+        sendAlert(e.message);
+        enableButtons();
+      }
     });
 
     submitBtn.addEventListener('click', function() {

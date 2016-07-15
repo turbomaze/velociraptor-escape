@@ -35,6 +35,8 @@ var GameEngine = (function() {
       level.dimensions[0], level.dimensions[1],
       level.start, level.finish
     );
+    document.getElementById('code-length').innerHTML = level.limits.code;
+    document.getElementById('code-compute').innerHTML = level.limits.compute;
 
     // setup the grid and render it
     grid.fromFrame(level.frames[0]);
@@ -89,12 +91,8 @@ var GameEngine = (function() {
   }
 
   function runProgram(program) {
-    try {
-      var stats = interpreter.interpret(program, level.limits);
-      console.log(stats);
-    } catch (e) {
-      console.log(JSON.stringify(e));
-    }
+    var stats = interpreter.interpret(program, level.limits);
+    console.log(stats);
   }
 
   function executeMovement(movement) {

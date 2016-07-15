@@ -73,7 +73,7 @@ var Interpreter = (function() {
   
   function exitIfExcessiveCompute(stats, limits) {
     if (stats['statement'] > limits.compute) {
-      throw {message: 'too much compute', code: exports.ERR_COMPUTE};
+      throw {message: 'RUNTIME ERROR: your program required too much computing power. Optimize it!', code: exports.ERR_COMPUTE};
     }
   }
   
@@ -93,12 +93,21 @@ var Interpreter = (function() {
     this.limits = limits || this.limits;
   
     // get the AST
-    var ast = this.parser.parse(GOAL, input.split('')); // throws exceptions
+    try {
+      var ast = this.parser.parse(GOAL, input.split('')); // throws exceptions
+    } catch (e) {
+      throw {
+        message: 'SYNTAX ERROR: error near line ' + e.data.info.line
+      };
+    }
   
     // get the size of the AST
     var codeSize = getSizeOfAST(ast);
     if (codeSize > this.limits.code) {
-       throw {message: 'too much code', code: exports.ERR_CODE_SIZE};
+       throw {
+         message: 'RUNTIME ERROR: your program contains too much code for this level!',
+         code: exports.ERR_CODE_SIZE
+       };
     }
   
     // run it
