@@ -25,6 +25,10 @@ app.get('/:userName/:levelId', function(req, res) {
   res.sendfile('index.html', {root: './public'});
 });
 
+app.get('/:userName', function(req, res) {
+  res.redirect('/'+req.params.userName+'/1');
+});
+
 app.post('/:userName/:levelId/validate', function(req, res) {
   var user = new User(req.params.userName);
   var levelId = req.params.levelId;
