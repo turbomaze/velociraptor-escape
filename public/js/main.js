@@ -22,7 +22,7 @@ var VelociraptorEscape = (function() {
   /******************
    * work functions */
   function initVelociraptorEscape() {
-    Level.loadLevel('04', function(level) {
+    Level.loadLevel('00', function(level) {
       GameEngine.init(level);
     });
 
@@ -35,7 +35,7 @@ var VelociraptorEscape = (function() {
     var nextLevelBtn = document.getElementById('next-level-btn');
 
     var base_url = "/";
-    var maxLevel = 10; // inclusive
+    var maxLevel = 5; // inclusive
     //Add prev/next level buttons
     var url = window.location.href.split("/");
     var username = url[url.length-2];
@@ -44,12 +44,18 @@ var VelociraptorEscape = (function() {
     if (levelId === 0) {
       prevLevelBtn.className += " disabled";
       nextLevelBtn.href = base_url + username + "/1";
-    } else if (levelId > 0 && levelId < 10) {
+    } else if (levelId > 0 && levelId < maxLevel) {
       prevLevelBtn.href = base_url + username + "/"+(levelId-1).toString();
       nextLevelBtn.href = base_url + username + "/"+ (levelId+1).toString();
-    } else if (levelId === 10) {
+      Level.loadLevel('0' + levelId.toString(), function(level) {
+        GameEngine.init(level);
+      });
+    } else if (levelId >= maxLevel) {
       prevLevelBtn.href = base_url + username + "/"+ (levelId-1).toString();
       nextLevelBtn.className += " disabled";
+      Level.loadLevel('0' + maxLevel.toString(), function(level) {
+        GameEngine.init(level);
+      });
     }
 
     runBtn.addEventListener('click',function() {
