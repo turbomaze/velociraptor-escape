@@ -5,6 +5,7 @@
     <title>Velociraptor Escape</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="icon" href="/images/favicon.png">
+    <script src="/js/lib/picoModal.js"></script>
     <script src="/js/lib/http.js"></script>
     <script src="/js/lib/language-grammar.js"></script>
     <script src="/js/lib/language-structure.js"></script>
@@ -19,9 +20,9 @@
   <body>
     <div class="content">
       <div class="header">
-        <h2 id="title">VELOCIRAPTOR ESCAPE</h2> <a class="btn" type="button" id="prev-level-btn"> Prev Level </a> <a class="btn" type="button" id="next-level-btn"> Next Level </a>
-        <h4>You're in a room with one hundred velociraptors. In order to survive... program your way out! <i>BUT IN WHAT LANGUAGE?</i></h4>
+        <h3 id="title">VELOCIRAPTOR ESCAPE</h3> <a class="btn" type="button" id="prev-level-btn"> Prev Level </a> <a class="btn" type="button" id="next-level-btn"> Next Level </a>
         <ul>
+          <li><a href='#' id='modal'>Help</a></li>
           <li><b>Time:</b> <span id="time-cont">T = <span id="time">0</span></span></li>
           <li><b>Alert:</b> <span id='alert'></span></li>
         </ul>
@@ -41,5 +42,6 @@
         <button id="submit-btn" type="button">Submit</button>
       </div>
     </div>
+    <div id= 'cred'>Thanks <a href="http://xkcd.com/">xkcd</a>!</div>
   </body>
 </html>
