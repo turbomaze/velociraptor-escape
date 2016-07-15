@@ -94,9 +94,11 @@ function validateLevel(program, level) {
 function movementsSurviveObstacles(start, movements, frames, goal) {
   function addVec(a, b) { return [a[0]+b[0],a[1]+b[1]]; }
   var pos = start;
-  for (var f = 1; f < Math.min(frames.length, movements.length); f++) {
-    pos = addVec(pos, movements[f]);
-    if (frames[f][pos[0]][pos[1]] === 1) return false;
+  for (var f = 1; f < Math.min(frames.length, 1+movements.length); f++) {
+    pos = addVec(pos, movements[f-1]);
+    if (frames[f][pos[0]][pos[1]] === 1) {
+      return false;
+    }
 
     if (pos[0] === goal[0] && pos[1] === goal[1]) {
       return true;

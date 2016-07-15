@@ -241,15 +241,23 @@ Interpreter.prototype.executeStatement = function(
   if (typeof statement === 'string') {
     // it's a naked identifier; treat it as a function call
     if (statement in variables && typeof variables[statement] === 'object') {
-      return this.runFunction(
-        variables,
-        {
-          'type': 'call',
-          'name': statement,
-          'arguments': []
-        },
-        stats
-      );
+      if (variables[statement].type === 'call') {
+        return this.runFunction(
+          variables,
+          {
+            'type': 'call',
+            'name': statement,
+            'arguments': []
+          },
+          stats
+        );
+      } else {
+        return this.runBuiltIn(
+          variables,
+          variables[statement],
+          stats
+        );
+      }
     } else {
       throw 'ERR: lone identifier "' + statement + '" is not a valid statement.';
     }
@@ -308,6 +316,12 @@ Interpreter.prototype.evaluateExpression = function(
   if (typeof expression === 'string') {
     if (expression in variables) {
       return variables[expression];
+    } else if (expression in this.builtIns) { 
+      return {
+        'type': 'builtIn',
+        'name': expression,
+        'arguments': []
+      };
     } else {
       throw 'ERR: identifier "' + expression + '" ' +
         'does not refer to an in-scope variable or function.';
@@ -321,10 +335,18 @@ Interpreter.prototype.evaluateExpression = function(
   } else {
     switch (expression.type) {
       case 'call':
-        return this.runFunction(variables, expression, stats);
+        if (expression.arguments.length === 0) {
+          return expression;
+        } else {
+          return this.runFunction(variables, expression, stats);
+        }
 
       case 'builtIn':
-        return this.runBuiltIn(variables, expression, stats);
+        if (expression.arguments.length === 0) {
+          return expression;
+        } else {
+          return this.runBuiltIn(variables, expression, stats);
+        }
 
       case 'operator':
         return this.evaluateOperator(
