@@ -1,6 +1,8 @@
 module.exports = (function () {
   "use strict";
-  var crypto = require('crypto');
+  var crypto = require('crypto'),
+      fs = require('fs'),
+      path = require('path');
 
   var Promise = require("bluebird");
 
@@ -9,7 +11,9 @@ module.exports = (function () {
 
   var config = require('./config.json');
 
-  var VALID_LEVELS = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+  var VALID_LEVELS = fs.readdirSync(path.join(__dirname, "public", "levels"))
+    .filter(function(name) { return name.endsWith(".json"); })
+    .map(function(name) { return name.substring(0, name.length - 5); });
 
   function isValidLevel(levelId) {
     return  VALID_LEVELS.indexOf(levelId !== -1);
@@ -51,5 +55,5 @@ module.exports = (function () {
               .digest('hex');
   };
 
-  return {User: User};
+  return {User: User, isValidLevel: isValidLevel};
 })();

@@ -3,46 +3,23 @@
   <head>
     <meta charset="UTF-8">
     <title>Velociraptor Escape</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
     <link rel="icon" href="/images/favicon.png">
-    <script src="/js/lib/picoModal.js"></script>
-    <script src="/js/lib/http.js"></script>
-    <script src="/js/lib/language-grammar.js"></script>
-    <script src="/js/lib/language-structure.js"></script>
-    <script src="/js/lib/parser.js"></script>
-    <script src="/js/lib/interpreter.js"></script>
-    <script src="/js/game.js" defer></script>
-    <script src="/js/main.js" defer></script>
-    <script src="/js/level.js" defer></script>
-    <script src="/js/grid.js" defer></script>
   </head>
 
   <body>
     <div class="content">
+    <center>
       <div class="header">
-        <h3 id="title">VELOCIRAPTOR ESCAPE</h3> <a class="btn" type="button" id="prev-level-btn"> Prev Level </a> <a class="btn" type="button" id="next-level-btn"> Next Level </a>
-        <ul>
-          <li><a class="help-link" href='#' id='modal'>Help</a></li>
-          <li><b>Time:</b> <span id="time-cont">T = <span id="time">0</span></span></li>
-          <li><b>Alert:</b> <span id='alert'></span></li>
-        </ul>
-        <ul>
-          <li><b>Code length limit:</b> <span id="code-length"></span> AST nodes</li>
-          <li><b>Code compute limit:</b> <span id='code-compute'></span> statement executions</li>
-        </ul>
+        <h1>Welcome to Velociraptor Escape.</h1>
+        <h2>If you're here by mistake, <a href="https://hackmit.org/">click here</a>.
+        <br>
+        If you're here for the puzzle, <a href="http://haxkcd.com">click here</a>.<br><br>
+        </h2>
       </div>
-      <div id="grid">
-        <!-- hi -->
+    <div id="pic"><img src="/images/somethingelse.png" alt="death" height="300" width="300"></div>
+      </center>
       </div>
-      <div id="controls">
-        <textarea wrap="off" id="textbox" rows="20" autofocus placeholder="Enter text here to move..."></textarea>
-        <button id="reset-btn" type="button">Reset</button>
-        <button id="watch-btn" type="button">Watch</button>
-        <input id="time-input" type="number" min="0" max="10000" placeholder="200" maxLength = > ms 
-        <button id="run-btn" type="button">Run</button>
-        <button id="submit-btn" type="button">Submit</button>
-      </div>
-    </div>
-    <div id= 'cred'>Thanks <a href="http://xkcd.com/">xkcd</a>!</div>
+      <div id= 'cred'>Thanks <a href="http://xkcd.com/">xkcd</a>!</div>
   </body>
 </html>

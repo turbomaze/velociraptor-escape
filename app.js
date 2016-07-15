@@ -6,6 +6,7 @@
 var express = require('express'),
     morgan = require('morgan'),
     bodyParser = require('body-parser'),
+    engine = require('express-dot-engine'),
     path = require('path'),
     Promise = require('bluebird'),
     model = require('./model'),
@@ -17,16 +18,26 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/:userName/status', function(req, res){
+  var user = new User(req.params.userName);
+  var levelId = req.params.levelId;
+
+  user.remainingLevels().then(function(remaining) {
+    var verify = null;
+    if (remaining.length === 0) verify = user.generateHash();
+    res.json({
+      "verify": verify,
+      "remaining": remaining
+    });
+  });
+});
+
 function validateProgram(program) {
   return false;
 }
 
-app.get('/', function(req, res) {
-  res.sendfile('homepage.html', {root: './public'});
-});
-
 app.get('/:userName/:levelId', function(req, res) {
-  res.sendfile('index.html', {root: './public'});
+  res.sendfile('game.html');
 });
 
 app.get('/:userName', function(req, res) {

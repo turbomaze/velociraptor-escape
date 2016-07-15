@@ -22,10 +22,6 @@ var VelociraptorEscape = (function() {
   /******************
    * work functions */
   function initVelociraptorEscape() {
-    Level.loadLevel('00', function(level) {
-      GameEngine.init(level);
-    });
-
     //button things
     var runBtn = document.getElementById('run-btn');
     var submitBtn = document.getElementById('submit-btn');
@@ -41,22 +37,29 @@ var VelociraptorEscape = (function() {
     var username = url[url.length-2];
     var levelId = url[url.length-1];
     levelId = parseInt(levelId);
-    if (levelId === 0) {
+    if (levelId <= 0) {
+      levelId = 0;
       prevLevelBtn.className += " disabled";
       nextLevelBtn.href = base_url + username + "/1";
     } else if (levelId > 0 && levelId < maxLevel) {
       prevLevelBtn.href = base_url + username + "/"+(levelId-1).toString();
       nextLevelBtn.href = base_url + username + "/"+ (levelId+1).toString();
-      Level.loadLevel('0' + levelId.toString(), function(level) {
-        GameEngine.init(level);
-      });
-    } else if (levelId >= maxLevel) {
-      prevLevelBtn.href = base_url + username + "/"+ (levelId-1).toString();
+    } else {
+      levelId = maxLevel;
+      prevLevelBtn.href = base_url + username + "/"+ (maxLevel-1).toString();
       nextLevelBtn.className += " disabled";
-      Level.loadLevel('0' + maxLevel.toString(), function(level) {
-        GameEngine.init(level);
-      });
     }
+
+    Level.loadLevel(levelId.toString(), function(level) {
+      GameEngine.init(level);
+    });
+
+
+    Http.get('/' + username + '/status', function(data) {
+      if(data.remaining.indexOf(levelId.toString()) === -1) {
+        sendAlert('You already completed this level!');
+      }
+    });
 
     runBtn.addEventListener('click',function() {
       var textarea = document.getElementById('textbox');
@@ -167,13 +170,13 @@ var VelociraptorEscape = (function() {
       overlayStyles: {
           backgroundColor: "#000",
           opacity: 0.5
-          
+
       }
   });
     document.getElementById("modal").addEventListener("click", function(){
-    modal.show();    
+    modal.show();
   });
-    
+
   return {
     init: initVelociraptorEscape
   };
