@@ -21,6 +21,10 @@ var VelociraptorEscape = (function() {
 
   /******************
    * work functions */
+   function isLevelComplete(levelId, remaining) {
+     return remaining.indexOf(levelId.toString()) === -1;
+   }
+
   function initVelociraptorEscape() {
     //button things
     var runBtn = document.getElementById('run-btn');
@@ -30,7 +34,7 @@ var VelociraptorEscape = (function() {
     var prevLevelBtn = document.getElementById('prev-level-btn');
     var nextLevelBtn = document.getElementById('next-level-btn');
 
-    var base_url = "/";
+    var base_url = "/play/";
     var maxLevel = 5; // inclusive
     //Add prev/next level buttons
     var url = window.location.href.split("/");
@@ -49,15 +53,18 @@ var VelociraptorEscape = (function() {
       prevLevelBtn.href = base_url + username + "/"+ (maxLevel-1).toString();
       nextLevelBtn.className += " disabled";
     }
+    document.getElementById('level-id').innerHTML = levelId;
 
     Level.loadLevel(levelId.toString(), function(level) {
       GameEngine.init(level);
     });
 
 
-    Http.get('/' + username + '/status', function(data) {
-      if(data.remaining.indexOf(levelId.toString()) === -1) {
-        sendAlert('You already completed this level!');
+    Http.get('/api/' + username + '/status', function(data) {
+      if(data.verify !== null) {
+        sendAlert('You completed the challenge!! Here is your key: ' + data.verify);
+      } else if(isLevelComplete(levelId, data.remaining)) {
+        sendAlert('You already completed this level! We still need levels ' + data.remaining);
       }
     });
 
@@ -94,16 +101,20 @@ var VelociraptorEscape = (function() {
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
       try {
-        var ast = GameEngine.parse(text.replace(/\r/g, ''));
         var url = window.location.href.split("/");
         var username = url[url.length-2];
         var levelId = url[url.length-1];
         Http.post(
-          '/'+username+'/'+levelId+'/validate', {
-            "text": text, "ast": ast
-          }, function(resp) {
-            sendAlert(JSON.stringify(resp));
-            enableButtons();
+          '/api/'+username+'/'+levelId+'/validate', {
+            "text": text
+          }, function(data) {
+            if(data.verify !== null) {
+              sendAlert('You completed the challenge!! Here is your key: ' + data.verify);
+            } else if(isLevelComplete(levelId, data.remaining)) {
+              sendAlert('Level verified! Keep going, we still need levels ' + data.remaining);
+            } else {
+              sendAlert('Submission failed');
+            }
           }
         );
       } catch (e) {

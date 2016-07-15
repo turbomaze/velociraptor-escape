@@ -64,5 +64,11 @@ module.exports = (function () {
               .digest('hex');
   };
 
-  return {User: User, isValidLevel: isValidLevel, getLevelConfig: getLevelConfig};
+  return {
+    User: User,
+    isValidLevel: isValidLevel,
+    getLevelConfig: getLevelConfig,
+    getValidLevels: function() {
+      return VALID_LEVELS
+    }};
 })();

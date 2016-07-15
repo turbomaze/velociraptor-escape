@@ -18,7 +18,7 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/:userName/status', function(req, res){
+app.get('/api/:userName/status', function(req, res){
   var user = new User(req.params.userName);
   var levelId = req.params.levelId;
 
@@ -33,31 +33,30 @@ app.get('/:userName/status', function(req, res){
 });
 
 function validateProgram(program) {
-  return false;
+  return true;
 }
 
-app.get('/:userName/:levelId', function(req, res) {
+app.get('/play/:userName/:levelId', function(req, res) {
   res.sendfile('game.html');
 });
 
-app.get('/:userName', function(req, res) {
-  res.redirect('/'+req.params.userName+'/0');
+app.get('/play/:userName', function(req, res) {
+  res.redirect('/play/'+req.params.userName+'/' + model.getValidLevels()[0]);
 });
 
-app.post('/:userName/:levelId/validate', function(req, res) {
+app.post('/api/:userName/:levelId/validate', function(req, res) {
   var user = new User(req.params.userName);
   var levelId = req.params.levelId;
 
   var programText = req.body.text;
-  var programAst = req.body.ast;
 
-  if(programText == null || programAst == null) {
+  if(programText == null) {
     res.status(400).end("bad request");
     return;
   }
 
   user.hasCompletedLevel(levelId).then(function(hasCompletedLevel) {
-    if(!hasCompletedLevel && validateProgram(null)) {
+    if(!hasCompletedLevel && validateProgram(programText, model.getLevelConfig(levelId))) {
       return user.completedLevel(levelId);
     } else return Promise.resolve();
   }).then(function() { return user.remainingLevels(); })
@@ -69,6 +68,10 @@ app.post('/:userName/:levelId/validate', function(req, res) {
       "remaining": remaining
     });
   });
+});
+
+app.use(function(req,res){
+    res.redirect('/');
 });
 
 module.exports = app;
