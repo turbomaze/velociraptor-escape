@@ -13,6 +13,8 @@ var GameEngine = (function() {
   // config
   var UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3, PAUSE = 4;
   var MOVE_EVERY = 200; // ms
+  var MIN_TIMESTEP = 1;
+  var MAX_TIMESTEP = 10000;
 
   // working variables
   var movementQueue;
@@ -138,7 +140,10 @@ var GameEngine = (function() {
   var time = document.getElementById('time');
 
   function watch(done) {
-    currentInterval = setInterval(watchCallback, MOVE_EVERY);
+    var timeInterval = parseInt(document.getElementById('time-input').value) || MOVE_EVERY;
+    timeInterval = Math.max(Math.min(timeInterval, MAX_TIMESTEP), MIN_TIMESTEP);
+
+    currentInterval = setInterval(watchCallback, timeInterval);
     grid.setAgentLoc(false);
     grid.render();
     function watchCallback() {

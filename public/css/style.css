@@ -229,10 +229,22 @@ textarea {
   font-size: 14px;
   outline: none;
   margin-bottom: 1vh;
+  font-family: "Courier New",Courier,monospace;
+  padding: 5px;
 } textarea:focus {
   -webkit-box-shadow: 0px 0px 10px 3px #4ecdc4;
   -moz-box-shadow: 0px 0px 10px 3px #4ecdc4;
   box-shadow: 0px 0px 10px 3px #4ecdc4;
+}
+
+input {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 1vh;
+  font-family: 'xkcd', sans-serif;
+  text-align: center;
 }
 
 @media (max-width: 600px) {
