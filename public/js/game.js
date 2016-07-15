@@ -99,10 +99,14 @@ var GameEngine = (function() {
 
   function executeMovement(movement) {
     var agentLocation = grid.getAgentLoc();
-    grid.setAgentLoc([
-      agentLocation[0] + movement[0],
-      agentLocation[1] + movement[1]
-    ]);
+    var newRow = agentLocation[0] + movement[0];
+    var newCol = agentLocation[1] + movement[1];
+    if (newRow >= 0 && newCol >= 0 && newRow < grid.rows && newCol < grid.cols) {
+        grid.setAgentLoc([
+          newRow,
+          newCol
+        ]);
+    }
   }
 
   function queueMovement(direction) {
@@ -202,8 +206,8 @@ var GameEngine = (function() {
         }
       } else {
         clearInterval(currentInterval);
-        done();
         nextFrame = 0;
+        done();
       }
     }
   }
