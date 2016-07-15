@@ -1,18 +1,27 @@
 /*
  * Setup Libraries and routes
+ * @author - Patrick Insinger
+ * @author - Anthony Liu
  * @author - Mac Liu
  */
 
+// imports
 var express = require('express'),
     morgan = require('morgan'),
     bodyParser = require('body-parser'),
-    engine = require('express-dot-engine'),
     path = require('path'),
     Promise = require('bluebird'),
     model = require('./model'),
     User = model.User;
 
+// variables
 var app = express();
+var builtIns = {
+  'log': function() {
+    console.log.apply(console, arguments);
+    return undefined;
+  }
+};
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
