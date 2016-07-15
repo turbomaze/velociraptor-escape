@@ -45,7 +45,9 @@ module.exports = (function () {
   User.prototype.hasCompletedLevel = function(levelId) {
     if(isValidLevel(levelId)){
       return redis.sismember(this.nameKey, levelId);
-    } else return Promise.resolve(true);
+    } else {
+      return Promise.resolve(true);
+    }
   };
 
   User.prototype.remainingLevels = function() {

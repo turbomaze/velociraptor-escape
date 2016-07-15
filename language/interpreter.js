@@ -93,7 +93,6 @@ Interpreter.prototype.interpret = function(input, limits) {
 
   // get the AST
   var ast = this.parser.parse(GOAL, input.split('')); // throws exceptions
-  console.log(ast);
   
   // run it
   this.interpretFromAST(ast, limits);

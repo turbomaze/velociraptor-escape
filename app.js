@@ -35,10 +35,6 @@ app.get('/api/:userName/status', function(req, res){
   });
 });
 
-function validateProgram(program) {
-  return true;
-}
-
 app.get('/play/:userName/:levelId', function(req, res) {
   res.sendfile('game.html');
 });
@@ -58,15 +54,26 @@ app.post('/api/:userName/:levelId/validate', function(req, res) {
     return;
   }
 
+  if(!model.isValidLevel(levelId)){
+    res.status(400).end("bad request");
+    return;
+  }
+
   user.hasCompletedLevel(levelId).then(function(hasCompletedLevel) {
     if(
       !hasCompletedLevel &&
-      gameValidator.validate(programText, levelId)
+      gameValidator.validate(
+        programText,
+        model.getLevelConfig(levelId)
+      )
     ) {
       return user.completedLevel(levelId);
-    } else return Promise.resolve();
-  }).then(function() { return user.remainingLevels(); })
-  .then(function(remaining) {
+    } else {
+      return Promise.resolve();
+    }
+  }).then(function() {
+     return user.remainingLevels();
+  }).then(function(remaining) {
     var verify = null;
     if (remaining.length === 0) verify = user.generateHash();
     res.json({

@@ -87,6 +87,7 @@ var VelociraptorEscape = (function() {
           },
 
           function onDone() {
+            sendAlert('You weren\'t eaten alive, but you didn\'t escape in time!');
             enableButtons();
           }
         );
