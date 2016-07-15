@@ -48,7 +48,7 @@ var VelociraptorEscape = (function() {
           sendAlert('Congratulations! You beat the level! Click "submit" to validate your solution on the server and move on.');
           enableButtons();
         },
-        
+
         function onDone() {
           enableButtons();
         }
@@ -56,10 +56,15 @@ var VelociraptorEscape = (function() {
     });
 
     submitBtn.addEventListener('click', function() {
+      disableButtons();
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
-      //process text
-      console.log('SUBMIT ' + text);
+      var ast = GameEngine.parse(text.replace(/\r/g, ''));
+
+      Http.post('/userName/01/validate', {"text": text, "ast": ast}, function(resp) {
+        alert(resp);
+        enableButtons();
+      });
     });
 
     watchBtn.addEventListener('click', function(){
