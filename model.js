@@ -25,7 +25,7 @@ module.exports = (function () {
   }
 
   function isValidLevel(levelId) {
-    return  VALID_LEVELS.indexOf(levelId !== -1);
+    return  VALID_LEVELS.indexOf(levelId) !== -1;
   }
 
   function getUserKey(username) {

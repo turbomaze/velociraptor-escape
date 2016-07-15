@@ -54,6 +54,11 @@ app.post('/api/:userName/:levelId/validate', function(req, res) {
     res.status(400).end("bad request");
     return;
   }
+  console.log(model.isValidLevel(levelId));
+  if(!model.isValidLevel(levelId)){
+    res.status(400).end("bad request");
+    return;
+  }
 
   user.hasCompletedLevel(levelId).then(function(hasCompletedLevel) {
     if(!hasCompletedLevel && validateProgram(programText, model.getLevelConfig(levelId))) {
