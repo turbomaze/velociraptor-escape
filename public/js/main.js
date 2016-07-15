@@ -129,6 +129,34 @@ var VelociraptorEscape = (function() {
     alertBox.innerHTML = '';
   }
 
+// picoModal popup thing
+  var modal = picoModal({
+      content: "<h4>You're in a room with one hundred velociraptors. In order to survive... program your way out! <i>BUT IN WHAT LANGUAGE?</i></h4><h5>instructions <br> instructions <br>instructions <br>instructions <br>instructions <br>instructions <br>instructions <br>instructions <br>instructions <br></h5>",
+      closeHtml: "<span>GOT IT !</span>",
+      modalStyles:{
+          color: "#0b3b4b",
+          border: "7px solid #c9d41b",
+          boxShadow: "10px 10px 53px -16px #000",
+          position: "fixed", top: "20%",
+          backgroundColor: "#fff",
+          borderRadius: "10px"
+      },
+      closeStyles: {
+          position: "fixed", bottom:"20px", right: "47%",
+          background: "#ffbc29", padding: "5px 10px", cursor: "pointer",
+          borderRadius: "10px",
+          boxShadow: "0 9px #e4a418"
+      },
+      overlayStyles: {
+          backgroundColor: "#000",
+          opacity: 0.5
+          
+      }
+  });
+    document.getElementById("modal").addEventListener("click", function(){
+    modal.show();    
+  });
+    
   return {
     init: initVelociraptorEscape
   };

@@ -1,13 +1,20 @@
 /* general styles */
 html, body {
   font-family: 'xkcd', Sans-Serif;
-  color: #000;
+  color: #fff;
   font-size: 12px;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   margin: 0;
   padding: 0;
   background: #0b3b4b;
+}
+a{
+  text-decoration:none;
+  color: #fff;
+}
+a:hover{
+  text-shadow: 2px 2px #f04681;
 }
 
 html body .header {
@@ -23,6 +30,19 @@ html body .header {
 @font-face {
   font-family: 'xkcd';
   src: url('../xkcd.otf') format('opentype');
+}
+html body .header h3 {
+  line-height: 10px;
+  font-size: 40px;
+}
+h5{
+  margin-left: 50px;
+  font-size: 15px;
+  padding-bottom:20px;
+}
+h4{
+  margin-left: 50px;
+  font-size: 20px;
 }
 
 #title{
@@ -43,16 +63,16 @@ html body .header {
   position: relative;
 } .fullClass {
   background-image: url("../images/velociraptorG.png");
-    background-size:100%;
-    background-color: #fff;
+  background-size:100%;
+  background-color: #fff;
 } .emptyClass {
   background-image: url("../images/blankG.png");
-    background-size:100%;
-    background-color: #ffbc29;
+  background-size:100%;
+  background-color: #ffbc29;
 } .agentClass {
   background-image: url("../images/dudeG.png");
-    background-size:100%;
-    background-color:#4ecdc4;
+  background-size:100%;
+  background-color:#4ecdc4;
 } .start-state {
   box-shadow: 0px 0px 0px 3px #ffe86b;
   z-index: 3000000000;
@@ -75,12 +95,12 @@ html body .header {
 }
 
 #controls {
-    border: 20px solid #ffe86b;
-    background-color:#c9d41b;
-    padding:2vw;
-    padding-bottom: 6vw;
-    padding-right:3vw;
-    border-radius: 10px;
+  border: 20px solid #ffe86b;
+  background-color:#c9d41b;
+  padding:2vw;
+  padding-bottom: 6vw;
+  padding-right:3vw;
+  border-radius: 10px;
   width: 57vmin;
   height: 50vmin;
   position: relative;
@@ -117,8 +137,8 @@ html body .header {
   box-shadow: 0 9px #32aba2;
   background-color: #4ecdc4;
 } #submit-btn:active {
-  background-color: #4ecdc4;
-  box-shadow: 0 5px #a9b308;
+  background-color: #69e7de;
+  box-shadow: 0 5px #4ecdc4;
   transform: translateY(4px);
 } #submit-btn:hover {
   background-color: #69e7de;
@@ -224,6 +244,13 @@ textarea {
     clear: both;
     margin-left: 2vw !important;
   }
+}
+
+#cred {
+  width: 100px;
+  position: fixed;
+  left: 47%;
+  bottom: 30px;
 }
 
 #alert {
