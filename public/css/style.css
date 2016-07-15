@@ -25,6 +25,10 @@ html body .header {
   src: url('../xkcd.otf') format('opentype');
 }
 
+#title{
+  display: inline-block;
+  margin-right: 20px;
+}
 #grid {
     border: 20px solid #ffe86b;
     background-color:#c9d41b;
@@ -81,7 +85,8 @@ html body .header {
   height: 50vmin;
   position: relative;
   float: left;
-} #controls button { 
+}
+#controls button {
   border: none;
   padding: 5px 10px;
   text-align: center;
@@ -148,6 +153,51 @@ html body .header {
   box-shadow: 0 9px #f7367a;
 } #reset-btn:hover:active {
   box-shadow: 0 6px #f7367a;
+}
+
+.btn {
+  box-shadow: 0 9px #e4a418;
+  background-color: #ffbc29;
+} .btn:active {
+  background-color: #ffbc29;
+  box-shadow: 0 5px #e4a418;
+  transform: translateY(4px);
+} .btn:hover {
+  background-color: #fdc54b;
+  box-shadow: 0 9px #ffbc29;
+} .btn:hover:active {
+  box-shadow: 0 6px #ffbc29;
+}
+
+.btn.disabled {
+  box-shadow: 0 9px #808080;
+  background-color: #C0C0C0;
+} .btn.disabled:active {
+  background-color: #C0C0C0;
+  box-shadow: 0 5px #808080;
+  transform: translateY(4px);
+} .btn.disabled:hover {
+  background-color: #D3D3D3;
+  box-shadow: 0 9px #C0C0C0;
+} .btn.disabled:hover:active {
+  box-shadow: 0 6px #C0C0C0;
+}
+
+.btn {
+  position: relative;
+  top: -5px;
+  text-decoration: none;
+  border: none;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  font-family: 'xkcd', sans-serif;
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+  color: black;
 }
 
 textarea {
