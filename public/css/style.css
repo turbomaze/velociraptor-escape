@@ -75,10 +75,10 @@ h4{
   background-color:#4ecdc4;
 } .start-state {
   box-shadow: 0px 0px 0px 3px #ffe86b;
-  z-index: 3000000000;
+  z-index: 10000;
 } .end-state {
   box-shadow: 0px 0px 0px 3px #0b3b4b;
-  z-index: 3000000000;
+  z-index: 10000;
 } .fullClass.agentClass {
   background: red;
 }
