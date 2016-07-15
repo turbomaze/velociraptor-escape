@@ -9,7 +9,7 @@ module.exports = (function () {
 
   var config = require('./config.json');
 
-  var VALID_LEVELS = ["01", "02"];
+  var VALID_LEVELS = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 
   function isValidLevel(levelId) {
     return  VALID_LEVELS.indexOf(levelId !== -1);

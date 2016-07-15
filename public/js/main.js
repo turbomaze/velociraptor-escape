@@ -84,12 +84,23 @@ var VelociraptorEscape = (function() {
       disableButtons();
       var textarea = document.getElementById('textbox');
       var text = textarea.value;
-      var ast = GameEngine.parse(text.replace(/\r/g, ''));
-
-      Http.post('/userName/01/validate', {"text": text, "ast": ast}, function(resp) {
-        alert(resp);
-        enableButtons();
-      });
+      try {
+        var ast = GameEngine.parse(text.replace(/\r/g, ''));
+        var url = window.location.href.split("/");
+        var username = url[url.length-2];
+        var levelId = url[url.length-1];
+        Http.post(
+          '/'+username+'/'+levelId+'/validate', {
+            "text": text, "ast": ast
+          }, function(resp) {
+            sendAlert(JSON.stringify(resp));
+            enableButtons();
+          }
+        );
+      } catch (e) {
+        sendAlert(e.message);
+        return;
+      }
     });
 
     watchBtn.addEventListener('click', function(){

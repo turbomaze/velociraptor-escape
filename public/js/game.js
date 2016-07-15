@@ -208,6 +208,8 @@ var GameEngine = (function() {
     runProgram: runProgram,
     UP: UP, RIGHT: RIGHT, DOWN: DOWN, LEFT: LEFT,
     watch: watch, run: run, reset: reset,
-    parse: function(input) { return interpreter.parse(input); }
+    parse: function(input) {
+      return interpreter.parser.parse('program', input.split(''));
+    }
   };
 })();

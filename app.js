@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 function validateProgram(program) {
-  return true;
+  return false;
 }
 
 app.get('/:userName/:levelId', function(req, res) {
