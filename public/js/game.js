@@ -118,6 +118,7 @@ var GameEngine = (function() {
         break;
       case LEFT:
         movementQueue.push([0, -1]);
+        break;
       case PAUSE:
         movementQueue.push([0, 0]);
         break;
@@ -174,19 +175,19 @@ var GameEngine = (function() {
     function runCallback() {
       if (nextFrame < level.frames.length && movementQueue.length > 0) {
         // move the velociraptors
-        grid.fromFrame(level.frames[nextFrame]);
-
-        // update the time
-        time.innerHTML = nextFrame;
         nextFrame += 1;
+        grid.fromFrame(level.frames[nextFrame]);
 
         // move the agent
         executeMovement(movementQueue.shift());
 
+        // update the time
+        time.innerHTML = nextFrame;
+
         // render
         grid.render();
 
-        // check for collisions
+       // check for collisions
         var loc = grid.getAgentLoc();
         if (grid.getState(loc[0], loc[1]) === Grid.FULL) {
           // call the onCollision callback
