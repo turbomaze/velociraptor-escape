@@ -29,5 +29,25 @@ var Http = (function() {
     req.send();
   };
 
+  exports.post = function(url, data, callback) {
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function() {
+      if(req.readyState == 4) {
+        if(req.status == 200) {
+          var data = null;
+          try {
+            data = JSON.parse(req.responseText);
+          } catch(e) {}
+          callback(data);
+        } else {
+          callback(null);
+        }
+      }
+    };
+    req.open("POST", url, true);
+    req.setRequestHeader("Content-type", "application/json");
+    req.send(JSON.stringify(data));
+  };
+
   return exports;
 })();

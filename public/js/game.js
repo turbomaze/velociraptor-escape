@@ -138,7 +138,7 @@ var GameEngine = (function() {
   }
 
   var time = document.getElementById('time');
-  
+
   function watch(done) {
     currentInterval = setInterval(watchCallback, MOVE_EVERY);
     grid.setAgentLoc(false);
@@ -163,7 +163,7 @@ var GameEngine = (function() {
     grid.fromFrame(level.frames[0]);
     grid.setAgentLoc(level.start);
     grid.render();
-    
+
     // get the movements queued by the program
     runProgram(program);
 
@@ -209,6 +209,7 @@ var GameEngine = (function() {
     move: queueMovement,
     runProgram: runProgram,
     UP: UP, RIGHT: RIGHT, DOWN: DOWN, LEFT: LEFT,
-    watch: watch, run: run, reset: reset
+    watch: watch, run: run, reset: reset,
+    parse: function(input) { return interpreter.parse(input); }
   };
 })();
