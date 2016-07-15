@@ -12,17 +12,11 @@ var express = require('express'),
     path = require('path'),
     Promise = require('bluebird'),
     model = require('./model'),
+    gameValidator = require('./gameValidator'),
     User = model.User;
 
 // variables
 var app = express();
-var builtIns = {
-  'log': function() {
-    console.log.apply(console, arguments);
-    return undefined;
-  }
-};
-
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -63,14 +57,12 @@ app.post('/api/:userName/:levelId/validate', function(req, res) {
     res.status(400).end("bad request");
     return;
   }
-  console.log(model.isValidLevel(levelId));
-  if(!model.isValidLevel(levelId)){
-    res.status(400).end("bad request");
-    return;
-  }
 
   user.hasCompletedLevel(levelId).then(function(hasCompletedLevel) {
-    if(!hasCompletedLevel && validateProgram(programText, model.getLevelConfig(levelId))) {
+    if(
+      !hasCompletedLevel &&
+      gameValidator.validate(programText, levelId)
+    ) {
       return user.completedLevel(levelId);
     } else return Promise.resolve();
   }).then(function() { return user.remainingLevels(); })
