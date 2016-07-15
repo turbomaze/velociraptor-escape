@@ -13,7 +13,7 @@ a{
   text-decoration:none;
   color: #fff;
 }
-a:hover{
+a.help-link:hover{
   text-shadow: 2px 2px #f04681;
 }
 
@@ -248,9 +248,10 @@ textarea {
 
 #cred {
   width: 100px;
-  position: fixed;
   left: 47%;
   bottom: 30px;
+  margin: 4em auto;
+  clear: both;
 }
 
 #alert {
