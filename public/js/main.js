@@ -78,6 +78,7 @@ var VelociraptorEscape = (function() {
 
           function onCollision() {
             sendAlert('Oops! A velociraptor ate you! Looks like you need to listen to <a href="https://xkcd.com/135/">Mr. Monroe</a>');
+            nomAgent();
             enableButtons();
           },
 
@@ -148,6 +149,45 @@ var VelociraptorEscape = (function() {
       runBtn.disabled = false;
       submitBtn.disabled = false;
       watchBtn.disabled = false;
+    }
+
+    function nomAgent() {
+      var once = false;
+      if (!once) {
+        var agent = document.querySelectorAll('.fullClass.agentClass')[0];
+
+        var rect = agent.getBoundingClientRect();
+        var centerX = rect.left;
+        var centerY = rect.top;
+        console.log(rect)
+        console.log(rect.width);
+        console.log(rect.height);
+        console.log(centerX);
+        console.log(centerY);
+        var img = document.createElement('img');
+        img.style.zIndex = 10001;
+        img.style.position = 'fixed';
+        img.style.top = centerY+ 'px';
+        img.style.left = centerX + 'px';
+        img.style.width = rect.width + 'px';
+        img.style.height = rect.height + 'px';
+        img.style.backgroundColor = 'white';
+        img.src = '/images/nom.gif';
+        img.style.transition = 'all 4s ease';
+        document.body.insertBefore(img, document.body.childNodes[0]);
+        setTimeout(function() {
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.top = 0;
+            img.style.left = 0;
+        }, 1000);
+        setTimeout(function() {
+
+            img.remove();
+        }, 6000)
+
+        once = true;
+      }
     }
   }
 

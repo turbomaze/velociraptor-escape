@@ -80,7 +80,11 @@ h4{
   box-shadow: 0px 0px 0px 3px #0b3b4b;
   z-index: 10000;
 } .fullClass.agentClass {
-  background: red;
+  background-image: url('../images/nom.gif');
+  background-color: white;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .row {
