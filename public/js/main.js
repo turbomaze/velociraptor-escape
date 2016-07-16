@@ -33,6 +33,7 @@ var VelociraptorEscape = (function() {
     var resetBtn = document.getElementById('reset-btn');
     var prevLevelBtn = document.getElementById('prev-level-btn');
     var nextLevelBtn = document.getElementById('next-level-btn');
+    var complexBtn = document.getElementById('complex-btn');
 
     var base_url = "/play/";
     var maxLevel = 4; // inclusive
@@ -139,6 +140,12 @@ var VelociraptorEscape = (function() {
       });
     });
 
+    complexBtn.addEventListener('click', function(){
+      var code = document.getElementById('textbox').value;
+      var complexity = calculateComplexity(code);
+      document.getElementById('code-complexity').innerHTML = complexity;
+    });
+
     function disableButtons() {
       runBtn.disabled = true;
       submitBtn.disabled = true;
@@ -151,43 +158,37 @@ var VelociraptorEscape = (function() {
       watchBtn.disabled = false;
     }
 
+    function calculateComplexity(code) {
+      //TODO: @turbomaze add logic
+      return 42;
+    }
+
     function nomAgent() {
-      var once = false;
-      if (!once) {
-        var agent = document.querySelectorAll('.fullClass.agentClass')[0];
+      var agent = document.querySelectorAll('.fullClass.agentClass')[0];
 
-        var rect = agent.getBoundingClientRect();
-        var centerX = rect.left;
-        var centerY = rect.top;
-        console.log(rect)
-        console.log(rect.width);
-        console.log(rect.height);
-        console.log(centerX);
-        console.log(centerY);
-        var img = document.createElement('img');
-        img.style.zIndex = 10001;
-        img.style.position = 'fixed';
-        img.style.top = centerY+ 'px';
-        img.style.left = centerX + 'px';
-        img.style.width = rect.width + 'px';
-        img.style.height = rect.height + 'px';
-        img.style.backgroundColor = 'white';
-        img.src = '/images/nom.gif';
-        img.style.transition = 'all 4s ease';
-        document.body.insertBefore(img, document.body.childNodes[0]);
-        setTimeout(function() {
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.top = 0;
-            img.style.left = 0;
-        }, 1000);
-        setTimeout(function() {
-
-            img.remove();
-        }, 6000)
-
-        once = true;
-      }
+      var rect = agent.getBoundingClientRect();
+      var centerX = rect.left;
+      var centerY = rect.top;
+      var img = document.createElement('img');
+      img.style.zIndex = 10001;
+      img.style.position = 'fixed';
+      img.style.top = centerY+ 'px';
+      img.style.left = centerX + 'px';
+      img.style.width = rect.width + 'px';
+      img.style.height = rect.height + 'px';
+      img.style.backgroundColor = 'white';
+      img.src = '/images/nom.gif';
+      img.style.transition = 'all 4s ease';
+      document.body.insertBefore(img, document.body.childNodes[0]);
+      setTimeout(function() {
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.top = 0;
+          img.style.left = 0;
+      }, 1000);
+      setTimeout(function() {
+          img.remove();
+      }, 6000); 
     }
   }
 

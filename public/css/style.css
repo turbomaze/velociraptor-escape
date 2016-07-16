@@ -179,6 +179,20 @@ h4{
   box-shadow: 0 6px #f7367a;
 }
 
+#complex-btn {
+  box-shadow: 0 9px #e4a418;
+  background-color: #ffbc29;
+} #complex-btn:active {
+  background-color: #ffbc29;
+  box-shadow: 0 5px #e4a418;
+  transform: translateY(4px);
+} #complex-btn:hover {
+  background-color: #fdc54b;
+  box-shadow: 0 9px #ffbc29;
+} #complex-btn:hover:active {
+  box-shadow: 0 6px #ffbc29;
+}
+
 .btn {
   box-shadow: 0 9px #e4a418;
   background-color: #ffbc29;
@@ -274,6 +288,6 @@ input {
   color: #ffe86b;
 }
 
-#time-cont, #code-length, #code-compute {
+#time-cont, #code-length, #code-compute, #code-complexity {
   color: #4ecdc4;
 }
