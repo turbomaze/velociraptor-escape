@@ -174,7 +174,7 @@ var Interpreter = (function() {
       var ast = this.parser.parse(GOAL, input.split('')); // throws exceptions
     } catch (e) {
       throw {
-        message: 'SYNTAX ERROR: error near line ' + e.data.info.line
+        message: 'SYNTAX ERROR: error near line ' + e.data.line
       };
     }
   
