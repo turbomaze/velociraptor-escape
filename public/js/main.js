@@ -74,6 +74,8 @@ var VelociraptorEscape = (function() {
       var text = textarea.value;
       disableButtons();
       try {
+        var complexity = calculateComplexity(text);
+        document.getElementById('code-complexity').innerHTML = complexity;
         GameEngine.run(
           text.replace(/\r/g, ''),
 
