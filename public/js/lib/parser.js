@@ -77,11 +77,11 @@ var Parser = (function() {
       var conformsToRule = ruleApplies(rules, structures, goal, tokens, ret);
       if (ret.newTokens.length > 0) {
         var errorOffset = tokens.length - ret.minNumCharsLeft;
-        var validPrefix = tokens.slice(0, errorOffset);
-        var lineNumber = validPrefix.reduce(function(line, token) {
-          return line + (token === '\n' ? 1 : 0);
-        }, 1);
-        throw {message: 'Unexpected characters on line '+lineNumber+'.'};
+        var info = getLineAndPositionFromTokens(tokens, errorOffset);
+        throw {
+          message: 'Unexpected characters on line '+info.line+'.',
+          data: info
+        };
       } else {
         return ret.structure;
       }
