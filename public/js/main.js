@@ -166,8 +166,7 @@ var VelociraptorEscape = (function() {
     }
 
     function calculateComplexity(code) {
-      //TODO: @turbomaze add logic
-      return 42;
+      return GameEngine.getComplexity(code);
     }
 
     function nomAgent() {
