@@ -2,7 +2,7 @@
 |   Velociraptor   |
 |      Escape      |
 | @author Anthony  |
-| @version 0.5     |
+| @version 1.0     |
 | @date 2016/07/07 |
 | @edit 2016/07/13 |
 \******************/
