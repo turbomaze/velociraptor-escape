@@ -1,8 +1,8 @@
 {
   "dimensions": [7, 7],
   "limits": {
-    "code": 105,
-    "compute": 1000
+    "code": 140,
+    "compute": 190 
   },
   "rate": 200,
   "start": [0, 6],
