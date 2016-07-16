@@ -63,7 +63,8 @@ module.exports = (function () {
   User.prototype.generateHash = function() {
     return crypto.createHmac('sha256', config.secret)
               .update('velociraptor:' + this.name.toLowerCase())
-              .digest('hex');
+              .digest('hex')
+              .substring(0,10);
   };
 
   return {

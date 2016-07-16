@@ -230,9 +230,12 @@ Interpreter.prototype.runFunction = function(variables, call, stats) {
   }
 
   // get the arguments
-  var args = call.arguments.map(function(argument) {
-    return self.evaluateExpression(variables, argument, stats);
-  });
+  var args = [];
+  if ('arguments' in call) {
+    args = call.arguments.map(function(argument) {
+      return self.evaluateExpression(variables, argument, stats);
+    });
+  }
 
   // if they haven't supplied enough arguments, partially apply it
   var numPartials = Object.keys(definition.partials).length;
@@ -290,9 +293,12 @@ Interpreter.prototype.runBuiltIn = function(variables, call, stats) {
   logStats('builtIn', stats, this.limits);
 
   // get the arguments
-  var args = call.arguments.map(function(argument) {
-    return self.evaluateExpression(variables, argument, stats);
-  });
+  var args = [];
+  if ('arguments' in call) {
+    args = call.arguments.map(function(argument) {
+      return self.evaluateExpression(variables, argument, stats);
+    });
+  }
 
   // get the definition
   switch (call.name) {
@@ -326,7 +332,7 @@ Interpreter.prototype.executeStatement = function(
   if (typeof statement === 'string') {
     // it's a naked identifier; treat it as a function call
     if (statement in variables && typeof variables[statement] === 'object') {
-      if (variables[statement].type === 'call') {
+      if (variables[statement].type === 'function') {
         return this.runFunction(
           variables,
           {
