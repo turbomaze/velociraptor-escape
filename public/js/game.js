@@ -13,6 +13,8 @@ var GameEngine = (function() {
   // config
   var UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3, PAUSE = 4;
   var MOVE_EVERY = 200; // ms
+  var MIN_TIMESTEP = 1;
+  var MAX_TIMESTEP = 10000;
 
   // working variables
   var movementQueue;
@@ -35,6 +37,8 @@ var GameEngine = (function() {
       level.dimensions[0], level.dimensions[1],
       level.start, level.finish
     );
+    document.getElementById('code-length').innerHTML = level.limits.code;
+    document.getElementById('code-compute').innerHTML = level.limits.compute;
 
     // setup the grid and render it
     grid.fromFrame(level.frames[0]);
@@ -89,20 +93,22 @@ var GameEngine = (function() {
   }
 
   function runProgram(program) {
-    try {
-      var stats = interpreter.interpret(program, level.limits);
-      console.log(stats);
-    } catch (e) {
-      console.log(JSON.stringify(e));
-    }
+    movementQueue = [];
+    var stats = interpreter.interpret(program, level.limits);
+    console.log(stats);
+    return stats.tooMuchCode;
   }
 
   function executeMovement(movement) {
     var agentLocation = grid.getAgentLoc();
-    grid.setAgentLoc([
-      agentLocation[0] + movement[0],
-      agentLocation[1] + movement[1]
-    ]);
+    var newRow = agentLocation[0] + movement[0];
+    var newCol = agentLocation[1] + movement[1];
+    if (newRow >= 0 && newCol >= 0 && newRow < grid.rows && newCol < grid.cols) {
+        grid.setAgentLoc([
+          newRow,
+          newCol
+        ]);
+    }
   }
 
   function queueMovement(direction) {
@@ -118,6 +124,7 @@ var GameEngine = (function() {
         break;
       case LEFT:
         movementQueue.push([0, -1]);
+        break;
       case PAUSE:
         movementQueue.push([0, 0]);
         break;
@@ -138,9 +145,12 @@ var GameEngine = (function() {
   }
 
   var time = document.getElementById('time');
-  
+
   function watch(done) {
-    currentInterval = setInterval(watchCallback, MOVE_EVERY);
+    var timeInterval = parseInt(document.getElementById('time-input').value) || MOVE_EVERY;
+    timeInterval = Math.max(Math.min(timeInterval, MAX_TIMESTEP), MIN_TIMESTEP);
+
+    currentInterval = setInterval(watchCallback, timeInterval);
     grid.setAgentLoc(false);
     grid.render();
     function watchCallback() {
@@ -163,27 +173,27 @@ var GameEngine = (function() {
     grid.fromFrame(level.frames[0]);
     grid.setAgentLoc(level.start);
     grid.render();
-    
+
     // get the movements queued by the program
-    runProgram(program);
+    var tooMuchCode = runProgram(program);
 
     currentInterval = setInterval(runCallback, MOVE_EVERY);
     function runCallback() {
       if (nextFrame < level.frames.length && movementQueue.length > 0) {
         // move the velociraptors
-        grid.fromFrame(level.frames[nextFrame]);
-
-        // update the time
-        time.innerHTML = nextFrame;
         nextFrame += 1;
+        grid.fromFrame(level.frames[nextFrame]);
 
         // move the agent
         executeMovement(movementQueue.shift());
 
+        // update the time
+        time.innerHTML = nextFrame;
+
         // render
         grid.render();
 
-        // check for collisions
+       // check for collisions
         var loc = grid.getAgentLoc();
         if (grid.getState(loc[0], loc[1]) === Grid.FULL) {
           // call the onCollision callback
@@ -194,12 +204,12 @@ var GameEngine = (function() {
         // check for success
         if (loc[0] === grid.end[0] && loc[1] === grid.end[1]) {
           clearInterval(currentInterval);
-          return onSuccess();
+          return onSuccess(tooMuchCode);
         }
       } else {
         clearInterval(currentInterval);
-        done();
         nextFrame = 0;
+        done();
       }
     }
   }
@@ -209,6 +219,9 @@ var GameEngine = (function() {
     move: queueMovement,
     runProgram: runProgram,
     UP: UP, RIGHT: RIGHT, DOWN: DOWN, LEFT: LEFT,
-    watch: watch, run: run, reset: reset
+    watch: watch, run: run, reset: reset,
+    parse: function(input) {
+      return interpreter.parser.parse('program', input.split(''));
+    }
   };
 })();

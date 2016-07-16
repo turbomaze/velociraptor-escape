@@ -20,7 +20,7 @@
    }
 
    exports.loadLevel = function(name, callback) {
-     Http.get('levels/' + name + '.json', function(data) {
+     Http.get('/levels/' + name + '.json', function(data) {
        callback(new LevelObject(data));
      });
    };
