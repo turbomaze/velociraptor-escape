@@ -93,8 +93,10 @@ var GameEngine = (function() {
   }
 
   function runProgram(program) {
+    movementQueue = [];
     var stats = interpreter.interpret(program, level.limits);
     console.log(stats);
+    return stats.tooMuchCode;
   }
 
   function executeMovement(movement) {
@@ -173,7 +175,7 @@ var GameEngine = (function() {
     grid.render();
 
     // get the movements queued by the program
-    runProgram(program);
+    var tooMuchCode = runProgram(program);
 
     currentInterval = setInterval(runCallback, MOVE_EVERY);
     function runCallback() {
@@ -202,7 +204,7 @@ var GameEngine = (function() {
         // check for success
         if (loc[0] === grid.end[0] && loc[1] === grid.end[1]) {
           clearInterval(currentInterval);
-          return onSuccess();
+          return onSuccess(tooMuchCode);
         }
       } else {
         clearInterval(currentInterval);

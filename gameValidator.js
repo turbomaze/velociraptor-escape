@@ -80,7 +80,9 @@ function validateLevel(program, level) {
 
   // interpret the program
   try {
-    var result = interpreter.interpret(program, level.limits);
+    var stats = interpreter.interpret(program, level.limits);
+    if (stats.tooMuchCode) return false;
+
     return movementsSurviveObstacles(
       level.start, queue, level.frames, level.finish
     );

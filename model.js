@@ -62,7 +62,7 @@ module.exports = (function () {
 
   User.prototype.generateHash = function() {
     return crypto.createHmac('sha256', config.secret)
-              .update('velociraptor:' + this.name)
+              .update('velociraptor:' + this.name.toLowerCase())
               .digest('hex');
   };
 

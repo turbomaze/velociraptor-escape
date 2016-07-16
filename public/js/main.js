@@ -83,8 +83,12 @@ var VelociraptorEscape = (function() {
             enableButtons();
           },
 
-          function onSuccess() {
-            sendAlert('Congratulations! You beat the level! Click "submit" to validate your solution on the server and move on.');
+          function onSuccess(tooMuchCode) {
+            if (tooMuchCode) {
+              sendAlert('You made it, but you need to use fewer built-ins! Be more abstract ;)');
+            } else {
+              sendAlert('Congratulations! You beat the level! Click "submit" to validate your solution on the server and move on.');
+            }
             enableButtons();
           },
 
@@ -118,10 +122,13 @@ var VelociraptorEscape = (function() {
             } else {
               sendAlert('Submission failed');
             }
+
+            enableButtons();
           }
         );
       } catch (e) {
         sendAlert(e.message);
+        enableButtons();
         return;
       }
     });

@@ -16,9 +16,69 @@ exports.ERR_COMPUTE = 102;
 
 // config
 var GOAL = 'program';
+var BUILT_IN_PENALTY = 10;
 
 // helpers
-function getSizeOfAST(ast) {
+function getCodeComplexity(builtIns, ast) {
+  var costs = getFunctionCosts(builtIns, ast);
+  var details = {};
+  return getSizeOfAST(costs, ast, details);
+}
+
+function getFunctionCosts(builtIns, ast) {
+  if (typeof ast !== 'object') return {};
+
+  var costs = {};
+  for (var ai = 0; ai < ast.length; ai++) {
+    var statement = ast[ai];
+    if (typeof statement === 'object') {
+      switch (statement.type) {
+        case 'function': // a function definition
+          costs[statement.name] = getFunctionCost(
+            builtIns, statement.body 
+          );
+          break;
+      }
+    }
+  }
+
+  return costs;
+}
+
+function getFunctionCost(builtIns, body) {
+  var num = 0;
+
+  for (var ai = 0; ai < body.length; ai++) {
+    var statement = body[ai];
+    if (typeof statement === 'object') {
+      switch (statement.type) {
+        case 'builtIn': // a function definition
+          num += 1; 
+          // fall through
+
+        case 'call': // a function call
+          // loop over args
+          for (var ai = 0; ai < statement.arguments.length; ai++) {
+            var arg = arguments[ai];
+            if (typeof arg === 'object' && arg.type === 'builtIn') {
+              num += 1; 
+            } else if (typeof arg === 'string' && (arg in builtIns)) {
+              num += 1;
+            }
+          }
+          break;
+      }
+    } else if (typeof statement === 'string') {
+      if (typeof arg === 'string' && (arg in builtIns)) {
+        num += 1;
+      }
+    }
+  }
+
+  return num;
+}
+
+function getSizeOfAST(funcCosts, ast, details) {
   var count = 1;
 
   var type = Object.prototype.toString.call(ast);
@@ -27,28 +87,45 @@ function getSizeOfAST(ast) {
     case '[object Object]':
       switch (ast.type) {
         case 'function':
-          count += getSizeOfAST(ast.parameters);
-          count += getSizeOfAST(ast.body);
+          count += getSizeOfAST(funcCosts, ast.parameters, details);
+          count += getSizeOfAST(funcCosts, ast.body, details);
+          details['function'] = (details['function'] || 0) + count;
           break;
         case 'call':
+          count += getSizeOfAST(funcCosts, ast.arguments, details);
+          details['call'] = (details['call'] || 0) + count;
+          if (ast.name in funcCosts) {
+            details['builtIn'] = (
+              details['builtIn'] || 0
+            ) + funcCosts[ast.name];
+          }
+          break;
         case 'builtIn':
-          count += getSizeOfAST(ast.arguments);
+          count += getSizeOfAST(funcCosts, ast.arguments, details);
+          details['builtIn'] = (details['builtIn'] || 0) + count;
           break;
         case 'ifElse':
-          count += getSizeOfAST(ast.predicate);
-          count += getSizeOfAST(ast.body);
-          count += getSizeOfAST(ast.else);
+          count += getSizeOfAST(funcCosts, ast.predicate, details);
+          count += getSizeOfAST(funcCosts, ast.body, details);
+          count += getSizeOfAST(funcCosts, ast.else, details);
+          details['ifElse'] = (details['ifElse'] || 0) + count;
           break;
         case 'if':
-          count += getSizeOfAST(ast.predicate);
-          count += getSizeOfAST(ast.body);
+          count += getSizeOfAST(funcCosts, ast.predicate, details);
+          count += getSizeOfAST(funcCosts, ast.body, details);
+          details['if'] = (details['if'] || 0) + count;
           break;
         case 'return':
+          count += getSizeOfAST(funcCosts, ast.value, details);
+          details['return'] = (details['return'] || 0) + count;
+          break;
         case 'assignment':
-          count += getSizeOfAST(ast.value);
+          count += getSizeOfAST(funcCosts, ast.value, details);
+          details['assignment'] = (details['assignment'] || 0) + count;
           break;
         case 'operator': // incidental similarity with call's
-          count += getSizeOfAST(ast.arguments);
+          count += getSizeOfAST(funcCosts, ast.arguments, details);
+          details['operator'] = (details['operator'] || 0) + count;
           break;
       }
       break;
@@ -56,7 +133,7 @@ function getSizeOfAST(ast) {
     // sequence of ASTs
     case '[object Array]':
       ast.forEach(function(node) {
-        count += getSizeOfAST(node);
+        count += getSizeOfAST(funcCosts, node, details);
       }); 
       break;
 
@@ -95,20 +172,28 @@ Interpreter.prototype.interpret = function(input, limits) {
   var ast = this.parser.parse(GOAL, input.split('')); // throws exceptions
   
   // run it
-  this.interpretFromAST(ast, limits);
+  return this.interpretFromAST(ast, limits);
 };
 
 Interpreter.prototype.interpretFromAST = function(ast, limits) {
   this.limits = limits || this.limits;
 
   // get the size of the AST
-  var codeSize = getSizeOfAST(ast);
-  if (codeSize > this.limits.code) {
-     throw {message: 'too much code', code: exports.ERR_CODE_SIZE};
+  var details = {};
+  var codeSize = getSizeOfAST(this.builtIns, ast, details);
+  var complexityMetric = BUILT_IN_PENALTY * (
+    details['builtIn'] || 0
+  ) + codeSize;
+  var tooMuchCode = false;
+  if (complexityMetric > this.limits.code) {
+    tooMuchCode = true;
   }
 
   // run it
-  var stats = {astSize: codeSize};
+  var stats = {
+    tooMuchCode: tooMuchCode,
+    astDetails: details, complexity: complexityMetric
+  };
   var start = +new Date();
   try {
     this.runBlock({}, ast, stats);
