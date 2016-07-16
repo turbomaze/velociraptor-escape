@@ -1,7 +1,7 @@
 {
   "dimensions": [7, 7],
   "limits": {
-    "code": 100,
+    "code": 105,
     "compute": 1000
   },
   "rate": 200,
