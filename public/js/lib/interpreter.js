@@ -581,6 +581,21 @@ var Interpreter = (function() {
         throw 'ERR: Unknown operator "' + name + '".';
     }
   };
+  Interpreter.prototype.getComplexity = function(source) {
+    var ast = [];
+    try {
+      ast = this.parser.parse(GOAL, source.split('')); // throws exceptions
+    } catch (e) {
+      return 'SYNTAX ERR';
+    }
+    var details = {};
+    var codeSize = getSizeOfAST(this.builtIns, ast, details);
+
+    return BUILT_IN_PENALTY * (
+      details['builtIn'] || 0
+    ) + codeSize;
+  };
+
   
   exports.Interpreter = Interpreter;
   exports.getSizeOfAST = getSizeOfAST;

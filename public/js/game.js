@@ -104,11 +104,15 @@ var GameEngine = (function() {
     var newRow = agentLocation[0] + movement[0];
     var newCol = agentLocation[1] + movement[1];
     if (newRow >= 0 && newCol >= 0 && newRow < grid.rows && newCol < grid.cols) {
-        grid.setAgentLoc([
-          newRow,
-          newCol
-        ]);
+      grid.setAgentLoc([
+        newRow,
+        newCol
+      ]);
     }
+  }
+
+  function getComplexity(program) {
+    return interpreter.getComplexity(program);
   }
 
   function queueMovement(direction) {
@@ -218,6 +222,7 @@ var GameEngine = (function() {
     init: initGameEngine,
     move: queueMovement,
     runProgram: runProgram,
+    getComplexity: getComplexity,
     UP: UP, RIGHT: RIGHT, DOWN: DOWN, LEFT: LEFT,
     watch: watch, run: run, reset: reset,
     parse: function(input) {
