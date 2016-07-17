@@ -1,8 +1,8 @@
 /******************\
-|     Language     |
+|    Raptor lang   |
 |     Structure    |
 | @author Anthony  |
-| @version 0.4     |
+| @version 1.0.2   |
 | @date 2016/07/07 |
 | @edit 2016/07/12 |
 \******************/
