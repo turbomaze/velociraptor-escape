@@ -2,7 +2,7 @@
 |   Velociraptor   |
 |      Escape      |
 | @author Anthony  |
-| @version 1.0     |
+| @version 1.0.2   |
 | @date 2016/07/12 |
 | @edit 2016/07/12 |
 \******************/
@@ -112,6 +112,7 @@ var GameEngine = (function() {
   }
 
   function getComplexity(program) {
+    console.log('chunk of bukttt');
     return interpreter.getComplexity(program);
   }
 
