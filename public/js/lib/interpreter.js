@@ -23,7 +23,11 @@ var Interpreter = (function() {
   function getCodeComplexity(builtIns, ast) {
     var costs = getFunctionCosts(builtIns, ast);
     var details = {};
-    return getSizeOfAST(costs, ast, details);
+    var codeSize = getSizeOfAST(costs, ast, details);
+    var complexityMetric = BUILT_IN_PENALTY * (
+      details['builtIn'] || 0
+    ) + codeSize;
+    return complexityMetric;
   }
 
   function getFunctionCosts(builtIns, ast) {
@@ -140,6 +144,11 @@ var Interpreter = (function() {
   
       // terminals
       case '[object String]':
+         if (ast.name in funcCosts) {
+           details['builtIn'] = (
+             details['builtIn'] || 0
+           ) + funcCosts[ast.name];
+         }
       case '[object Number]':
       case '[object Boolean]':
         break;
@@ -180,10 +189,7 @@ var Interpreter = (function() {
   
     // get the size of the AST
     var details = {};
-    var codeSize = getSizeOfAST(this.builtIns, ast, details);
-    var complexityMetric = BUILT_IN_PENALTY * (
-      details['builtIn'] || 0
-    ) + codeSize;
+    var complexityMetric = this.getComplexity(input);
     var tooMuchCode = false;
     if (complexityMetric > this.limits.code) {
       tooMuchCode = true;
@@ -589,11 +595,9 @@ var Interpreter = (function() {
       return 'SYNTAX ERR';
     }
     var details = {};
-    var codeSize = getSizeOfAST(this.builtIns, ast, details);
+    var codeSize = getCodeComplexity(this.builtIns, ast);
 
-    return BUILT_IN_PENALTY * (
-      details['builtIn'] || 0
-    ) + codeSize;
+    return codeSize;
   };
 
   

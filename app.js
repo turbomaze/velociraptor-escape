@@ -1,5 +1,6 @@
 /*
  * Setup Libraries and routes
+ * @version - 1.0.2
  * @author - Patrick Insinger
  * @author - Anthony Liu
  * @author - Mac Liu

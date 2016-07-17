@@ -15,7 +15,7 @@ Velociraptor Escape challenges players to traverse a grid of moving obstacles by
 
 To clarify, levels consist of a list of snapshots of all of the obstacles' locations. There's some set of paths that, when traversed through time, arrive at the goal state from the start state without colliding with anything. The simplest solution is to hard-code a sequence of movements that produces one of those paths, but using the power of abstraction, there are always more elegant ways to express the same sequence.
 
-An important aspect of this game, which as of v1.0.1 is not working as well as it should :(, is that it grades your program based on how much it's abstracted about the solution.
+An important aspect of this game, which as of v1.0.2 is not working as well as it should :(, is that it grades your program based on how much it's abstracted about the solution.
 
 In addition to the obstacle sequences, each level also has associated with it two types of constraints: code constraints and compute constraints. The code constraints require that you've abstracted some minimal amount about the solution, and it will reject valid solutions that solve the problem too explicitly. The compute constraint limits how many computations the input program is allowed to perform to arrive at the movement sequence.
 
