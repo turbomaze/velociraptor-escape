@@ -35,7 +35,7 @@ This project was a wild ride from start to finish. I (turbomaze) had the idea fo
 
 [Zareen Choudhury](http://github.com/zareenc) -- a true savior in those critical last moments prior to release, Zareen helped architect and detail the specifics of the game levels.
 
-[Carlos Hernandez](http://github.com/mysticuno) -- from front-end features to misc bug fixes to implementing elegant solutions to the puzzle levels, Carlos offered his help wherever it was needed (which was a lot of places).
+[Carlos Henriquez](http://github.com/mysticuno) -- from front-end features to misc bug fixes to implementing elegant solutions to the puzzle levels, Carlos offered his help wherever it was needed (which was a lot of places).
 
 [Kyle Bridburg](http://github.com/kbridbur) -- Kyle was the first one to figure out how to efficiently design levels, writing code to automatically generate game levels (code is not in repository).
 
