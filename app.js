@@ -68,7 +68,7 @@ app.post('/api/:userName/:levelId/validate', function(req, res) {
         model.getLevelConfig(levelId)
       )
     ) {
-      return user.completedLevel(levelId);
+      return user.completedLevel(levelId, programText);
     } else {
       return Promise.resolve();
     }
