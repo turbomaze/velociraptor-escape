@@ -32,13 +32,20 @@ module.exports = (function () {
     return 'user:' + username;
   }
 
+  function getProgramKey(username, levelId) {
+    return 'code:' + username + ':' + levelId.toString();
+  }
+
   function User(name) {
     this.name = name;
     this.nameKey = getUserKey(name);
   }
 
-  User.prototype.completedLevel = function(levelId) {
-    if(isValidLevel(levelId)) return redis.sadd(this.nameKey, levelId);
+  User.prototype.completedLevel = function(levelId, programText) {
+    if(isValidLevel(levelId)) {
+      redis.set(getProgramKey(this.name, levelId), programText.trim());
+      return redis.sadd(this.nameKey, levelId);
+    }
     return Promise.resolve();
   };
 
